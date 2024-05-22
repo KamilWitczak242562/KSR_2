@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="595.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
+    <children>
+        <TabPane layoutX="-4.0" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Kwantyfikator">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <MenuButton layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Typ kwantyfikatora">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Względny" />
+                                        <MenuItem mnemonicParsing="false" text="Absolutny" />
+                                    </items>
+                                </MenuButton>
+                                <TextField layoutX="14.0" layoutY="101.0" promptText="Nazwa" />
+                                <TextField layoutX="14.0" layoutY="138.0" promptText="Początek zakresu" />
+                                <LineChart layoutX="194.0" layoutY="39.0" prefHeight="485.0" prefWidth="653.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                    </yAxis>
+                                </LineChart>
+                                <MenuButton layoutX="14.0" layoutY="61.0" mnemonicParsing="false" text="Typ funkcji">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Guss" />
+                                        <MenuItem mnemonicParsing="false" text="Trapezoidalna" />
+                                        <MenuItem mnemonicParsing="false" text="Trójkątna" />
+                                    </items>
+                                </MenuButton>
+                                <TextField layoutX="14.0" layoutY="176.0" promptText="Koniec zakresu" />
+                                <Button layoutX="78.0" layoutY="392.0" mnemonicParsing="false" text="Stwórz" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Summaryzator/Kwalifikator">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <MenuButton layoutX="14.0" layoutY="28.0" mnemonicParsing="false" text="Wybierz argument">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Action 1" />
+                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                    </items>
+                                </MenuButton>
+                                <TextField layoutX="16.0" layoutY="109.0" promptText="Nazwa" />
+                                <MenuButton layoutX="16.0" layoutY="67.0" mnemonicParsing="false" text="Typ funkcji">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Guss" />
+                                        <MenuItem mnemonicParsing="false" text="Trapezoidalna" />
+                                        <MenuItem mnemonicParsing="false" text="Trójkątna" />
+                                    </items>
+                                </MenuButton>
+                                <TextField layoutX="16.0" layoutY="153.0" promptText="Początek zakresu" />
+                                <TextField layoutX="16.0" layoutY="197.0" promptText="Koniec zakresu" />
+                                <LineChart layoutX="180.0" layoutY="10.0" prefHeight="511.0" prefWidth="663.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                    </yAxis>
+                                </LineChart>
+                                <Button layoutX="80.0" layoutY="394.0" mnemonicParsing="false" text="Stwórz" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <MenuButton layoutX="8.0" layoutY="8.0" mnemonicParsing="false" text="Zaawansowane">
+            <items>
+                <MenuItem fx:id="option1" mnemonicParsing="false" text="1 podmiotowe" />
+                <MenuItem fx:id="option2" mnemonicParsing="false" text="2 podmiotowe" />
+                <MenuItem fx:id="option3" mnemonicParsing="false" text="Zaawansowane" />
+            </items>
+        </MenuButton>
+        <TabPane fx:id="tabPane" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+            <tabs>
+                <Tab text="Parametry">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TreeView fx:id="treeView1" layoutX="17.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
+                                <TreeView fx:id="treeView2" layoutX="324.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
+                                <TreeView fx:id="treeView3" layoutX="623.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
+                                <Button layoutX="387.0" layoutY="464.0" mnemonicParsing="false" text="Generuj" />
+                                <Label layoutX="78.0" layoutY="25.0" text="Kwantyfikatory" />
+                                <Label layoutX="382.0" layoutY="25.0" text="Kwalifikatory" />
+                                <Label layoutX="682.0" layoutY="25.0" text="Summaryzatory" />
+                                <CheckBox layoutX="17.0" layoutY="90.0" mnemonicParsing="false" text="About half" />
+                                <CheckBox layoutX="324.0" layoutY="90.0" mnemonicParsing="false" text="High level of vitamin C" />
+                                <CheckBox layoutX="623.0" layoutY="90.0" mnemonicParsing="false" text="Low level of sugar" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Wyniki">
+                    <content>
+                        <AnchorPane fx:id="wynikiTabContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</Pane>
