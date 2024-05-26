@@ -138,11 +138,6 @@ public class Measures {
         return 1 - Math.pow(p, 1.0 / getSummarizers().size());
     }
 
-
-    /**
-     * rzuca NaN'y
-     * @return
-     */
     public double calcT3() {
         int t = 0;
         int h = 0;
@@ -189,10 +184,6 @@ public class Measures {
         }
     }
 
-    /**
-     * rzuca NaN'y przez calcT3()
-     * @return NaN
-     */
     public double calcT4() {
         double p = 1.0;
         for (Label label : getSummarizers()) {
