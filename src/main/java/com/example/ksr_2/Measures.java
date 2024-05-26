@@ -67,22 +67,23 @@ public class Measures {
             if (getQuantifier().isAbsolute()) {
                 for (FoodEntry foodEntry : getObjects1()) {
                     for (Label label : getSummarizers()) {
-                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                     }
                     sum += Collections.min(getMin);
                     getMin.removeAll(getMin);
                 }
-                sum = sum / getObjects1().size();
+                System.out.println("Sum dla q abs " + sum);
                 return getQuantifier().getMembership(sum);
             } else {
                 for (FoodEntry foodEntry : getObjects1()) {
                     for (Label label : getSummarizers()) {
-                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                     }
                     sum += Collections.min(getMin);
                     getMin.removeAll(getMin);
                 }
-                return getQuantifier().getMembership(sum);
+                System.out.println("sum dla q rel " +  sum / getObjects1().size());
+                return getQuantifier().getMembership(sum / getObjects1().size());
             }
         } else {
             List<Double> getMin = new ArrayList<>();
@@ -94,11 +95,11 @@ public class Measures {
                 sumForS = 0;
                 sumForW = 0;
                 for (Label label : getSummarizers()) {
-                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 sumForS += Collections.min(getMin);
                 for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 sumForW += Collections.min(getMin);
                 if (sumForS < sumForW) {
@@ -112,7 +113,7 @@ public class Measures {
             sumForW = 0;
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getQualifiers()) {
-                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 sumForW += Collections.min(getMin);
                 getMin.removeAll(getMin);
@@ -121,6 +122,8 @@ public class Measures {
             for (double value : valuesForWMinS) {
                 sumWandS += value;
             }
+            sumWandS = sumWandS / getObjects1().size();
+            sumForW = sumForW / getObjects1().size();
             return getQuantifier().getMembership(sumWandS / sumForW);
         }
     }
@@ -130,7 +133,7 @@ public class Measures {
         List<Double> values = new ArrayList<>();
         for (Label label : getSummarizers()) {
             for (FoodEntry foodEntry : getObjects1()) {
-                values.add(foodEntry.getValueByName(label.getLinguisticVariable()));
+                values.add(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
             }
             p *= label.getFuzzySet().degreeOfFuzziness(values);
             values.removeAll(values);
@@ -146,7 +149,7 @@ public class Measures {
         for (FoodEntry foodEntry : getObjects1()) {
             if (getQualifiers() != null) {
                 for (Label label : getQualifiers()) {
-                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 membershipQ = Collections.min(listQ);
                 listQ.removeAll(listQ);
@@ -154,7 +157,7 @@ public class Measures {
             if (membershipQ > 0.0) {
                 h++;
                 for (Label label : getSummarizers()) {
-                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 membershipQ = Collections.min(listQ);
                 listQ.removeAll(listQ);
@@ -172,7 +175,7 @@ public class Measures {
         } else {
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getSummarizers()) {
-                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 membershipQ = Collections.min(listQ);
                 listQ.removeAll(listQ);
@@ -189,7 +192,7 @@ public class Measures {
         for (Label label : getSummarizers()) {
             double r = 0.0;
             for (FoodEntry foodEntry : getObjects1()) {
-                if (label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())) > 0.0) {
+                if (label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())) > 0.0) {
                     r++;
                 }
             }
@@ -210,10 +213,10 @@ public class Measures {
             List<Double> bigS = new ArrayList<>();
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 bigS.add(Collections.min(getMinS));
                 bigQ.add(Collections.min(getMinQ));
@@ -238,14 +241,14 @@ public class Measures {
             if (getQuantifier().isAbsolute()) {
                 return 1 - (double) suppQ.size() / getObjects1().size();
             } else {
-                return 1 - suppQ.size();
+                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
             }
         } else {
             List<Double> getMinS = new ArrayList<>();
             List<Double> bigS = new ArrayList<>();
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 bigS.add(Collections.min(getMinS));
                 getMinS.removeAll(getMinS);
@@ -259,7 +262,7 @@ public class Measures {
             if (getQuantifier().isAbsolute()) {
                 return 1 - (double) suppQ.size() / getObjects1().size();
             } else {
-                return 1 - suppQ.size();
+                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
             }
         }
     }
@@ -272,10 +275,10 @@ public class Measures {
             List<Double> bigS = new ArrayList<>();
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 bigS.add(Collections.min(getMinS));
                 bigQ.add(Collections.min(getMinQ));
@@ -300,14 +303,14 @@ public class Measures {
             if (getQuantifier().isAbsolute()) {
                 return 1 - sum / getObjects1().size();
             } else {
-                return 1 - sum;
+                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
             }
         } else {
             List<Double> getMinS = new ArrayList<>();
             List<Double> bigS = new ArrayList<>();
             for (FoodEntry foodEntry : getObjects1()) {
                 for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 bigS.add(Collections.min(getMinS));
                 getMinS.removeAll(getMinS);
@@ -321,21 +324,17 @@ public class Measures {
             if (getQuantifier().isAbsolute()) {
                 return 1 - sum / getObjects1().size();
             } else {
-                return 1 - sum;
+                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
             }
         }
     }
 
     public double calcT8() {
         double p = 1.0;
+        double card = 0.0;
         for (Label label : getSummarizers()) {
-            double card = 0.0;
-            for (FoodEntry foodEntry : getObjects1()) {
-                if (label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())) > 0.0) {
-                    card += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable()));
-                }
-            }
-            p *= card;
+            card = label.getFuzzySet().getMembershipFunction().getCardinalNumber();
+            p *= card / label.getFuzzySet().getUniverse().universe();
         }
         return 1 - Math.pow(p, (double) 1 / getSummarizers().size());
     }
@@ -346,7 +345,7 @@ public class Measures {
             List<Double> values = new ArrayList<>();
             for (Label label : getQualifiers()) {
                 for (FoodEntry foodEntry : getObjects1()) {
-                    values.add(foodEntry.getValueByName(label.getLinguisticVariable()));
+                    values.add(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
                 }
                 p *= label.getFuzzySet().degreeOfFuzziness(values);
                 values.removeAll(values);
@@ -360,14 +359,10 @@ public class Measures {
     public double calcT10() {
         if (getQualifiers() != null) {
             double p = 1.0;
-            for (Label label : getQualifiers()) {
-                double card = 0.0;
-                for (FoodEntry foodEntry : getObjects1()) {
-                    if (label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())) > 0.0) {
-                        card += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable()));
-                    }
-                }
-                p *= card;
+            double card = 0.0;
+            for (Label label : getSummarizers()) {
+                card = label.getFuzzySet().getMembershipFunction().getCardinalNumber();
+                p *= card / label.getFuzzySet().getUniverse().universe();
             }
             return 1 - Math.pow(p, (double) 1 / getSummarizers().size());
         } else {
@@ -385,17 +380,16 @@ public class Measures {
 
     public double calcQuality() {
         double q = 0.0;
+        double sum = 0.0;
         if (getQualifiers() == null) {
             List<Double> measures = new ArrayList<>() {{
                 add(T1degreeOfTruth); add(T2degreeOfImprecision); add(T3degreeOfCovering); add(T4degreeOfAppropriateness);
                 add(T5lengthOfSummary); add(T6degreeOfQuantifierImprecision); add(T7degreeOfQuantifierCardinality);
                 add(T8degreeOfSummarizerCardinality);
             }};
-            weights.remove(10);
-            weights.remove(9);
-            weights.remove(8);
-            for (int i = 0; i < weights.size(); i++) {
+            for (int i = 0; i < measures.size(); i++) {
                 q += weights.get(i) * measures.get(i);
+                sum += weights.get(i);
             }
         } else {
             List<Double> measures = new ArrayList<>() {{
@@ -404,10 +398,19 @@ public class Measures {
                 add(T8degreeOfSummarizerCardinality); add(T9degreeOfQualifierImprecision); add(T10degreeOfQualifierCardinality);
                 add(T11lengthOfQualifier);
             }};
-            for (int i = 0; i < weights.size(); i++) {
+            for (int i = 0; i < measures.size(); i++) {
                 q += weights.get(i) * measures.get(i);
+                sum += weights.get(i);
             }
         }
-        return q;
+        return q / sum;
+    }
+
+    @Override
+    public String toString() {
+        return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
+                T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
+                T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality + ", " + T9degreeOfQualifierImprecision +
+                ", " + T10degreeOfQualifierCardinality + ", " + T11lengthOfQualifier + ", " + qualityOfSummary;
     }
 }

@@ -9,12 +9,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
 public class HelloController implements Initializable {
     @FXML
@@ -75,11 +78,43 @@ public class HelloController implements Initializable {
         buttonGenerate.setOnAction(event -> generate());
     }
 
+    private List<FoodEntry> loadFoodEntries() {
+        List<FoodEntry> foodEntries = new ArrayList<>();
+        try (CSVReader reader = new CSVReader(new FileReader("src/main/resources/com/example/ksr_2/filtered_data.csv"))) {
+            String[] line;
+            reader.readNext();
+
+            long idCounter = 1;
+            while ((line = reader.readNext()) != null) {
+                FoodEntry entry = new FoodEntry(
+                        idCounter++,
+                        Double.parseDouble(line[1]),
+                        Double.parseDouble(line[2]),
+                        Double.parseDouble(line[3]),
+                        Double.parseDouble(line[4]),
+                        Double.parseDouble(line[5]),
+                        Double.parseDouble(line[6]),
+                        Double.parseDouble(line[7]),
+                        Double.parseDouble(line[8]),
+                        Double.parseDouble(line[9]),
+                        Double.parseDouble(line[10]),
+                        Double.parseDouble(line[11])
+                );
+                foodEntries.add(entry);
+            }
+        } catch (CsvValidationException | IOException e) {
+            e.printStackTrace();
+        }
+        return foodEntries;
+    }
+
     private void generate() {
         List<CheckedItem> checkedItemsQ = getCheckedItems(Q);
         List<CheckedItem> checkedItemsW = getCheckedItems(W);
         List<CheckedItem> checkedItemsS = getCheckedItems(S);
         List<Double> weights;
+
+        List<FoodEntry> foodEntries = loadFoodEntries();
 
         if (t1.getText().isEmpty()) {
             weights = new ArrayList<>() {{
@@ -140,20 +175,6 @@ public class HelloController implements Initializable {
 
         ss.removeIf(label -> !checkedItemNamesS.contains(label.getLabelName()));
 
-        List<FoodEntry> foodEntries = new ArrayList<>();
-
-        FoodEntry entry1 = new FoodEntry(1, 100, 20, 10, 250, 5, 15, 10, 8, 30, 50, 0.5);
-        FoodEntry entry2 = new FoodEntry(2, 200, 30, 15, 300, 10, 20, 12, 10, 40, 60, 1.0);
-        FoodEntry entry3 = new FoodEntry(3, 150, 25, 12, 270, 7, 18, 11, 9, 35, 55, 0.8);
-        FoodEntry entry4 = new FoodEntry(4, 120, 22, 11, 260, 6, 16, 10.5, 8.5, 32, 52, 0.7);
-        FoodEntry entry5 = new FoodEntry(5, 180, 28, 14, 290, 9, 19, 11.5, 9.5, 38, 58, 0.9);
-
-        foodEntries.add(entry1);
-        foodEntries.add(entry2);
-        foodEntries.add(entry3);
-        foodEntries.add(entry4);
-        foodEntries.add(entry5);
-
         summaries = new ArrayList<>();
         for (CheckedItem checkedItem : checkedItemsQ) {
             if (checkedItem.getCategory().equals("Absolutne")) {
@@ -182,9 +203,14 @@ public class HelloController implements Initializable {
             oneSummaries.addAll(generatedSummaries);
         }
 
+        oneSummaries.sort(Comparator.comparingDouble(OneSummary::getQuality).reversed());
+
         summariesList = FXCollections.observableArrayList(
                 oneSummaries.stream().map(OneSummary::toString).collect(Collectors.toList())
         );
+        for (String oneSummary: summariesList) {
+            System.out.println(oneSummary);
+        }
         view.setItems(summariesList);
     }
 

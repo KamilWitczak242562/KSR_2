@@ -6,6 +6,7 @@ module com.example.ksr_2 {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires lombok;
+    requires com.opencsv;
 
     opens com.example.ksr_2 to javafx.fxml;
     exports com.example.ksr_2;

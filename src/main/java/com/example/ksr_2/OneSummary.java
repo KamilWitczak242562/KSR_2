@@ -9,10 +9,17 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OneSummary {
     private String summary;
-    private double membership;
+    private Measures measures;
+    private double quality;
+
+    public OneSummary(String summary, Measures measures) {
+        this.summary = summary;
+        this.measures = measures;
+        this.quality = measures.getT1degreeOfTruth();
+    }
 
     @Override
     public String toString() {
-        return summary + "[" + membership + "]";
+        return summary + "[" + measures + "]";
     }
 }

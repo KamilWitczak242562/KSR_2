@@ -22,11 +22,7 @@ public class Gaussian implements MembershipFunction {
     }
 
     @Override
-    public double getSupport(double x) {
-        if (getMembership(x) > 0.01) {
-            return 1.0;
-        } else {
-            return 0.0;
-        }
+    public double getSupport() {
+        return 6 * stdev;
     }
 }

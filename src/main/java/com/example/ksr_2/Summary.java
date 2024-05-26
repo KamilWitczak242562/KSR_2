@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -49,8 +48,7 @@ public class Summary {
                 } else {
                     measures1 = new Measures(weights, quantifier, qualifiers, currentSummarizers, objects1);
                 }
-                double quality = measures1.getQualityOfSummary();
-                allOneSummaries.add(new OneSummary(sentence, quality));
+                allOneSummaries.add(new OneSummary(sentence, measures1));
             }
         }
 
@@ -59,25 +57,38 @@ public class Summary {
 
     public List<String> generateSentences(List<Label> qualifiers, List<Label> summarizers) {
         List<String> sentences = new ArrayList<>();
-
-        List<List<Label>> qualifierCombinations = getAllCombinations(qualifiers);
+        List<List<Label>> qualifierCombinations;
         List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-
-        for (List<Label> qualifierCombination : qualifierCombinations) {
-            for (List<Label> summarizerCombination : summarizerCombinations) {
-                StringBuilder sentence = new StringBuilder();
-                if (qualifierCombination.isEmpty()) {
-                    sentence.append(quantifier.toString()).append(" products have ");
-                } else {
-                    sentence.append(quantifier.toString()).append(" products that are/have ");
-                    for (int i = 0; i < qualifierCombination.size(); i++) {
+        if (qualifiers != null) {
+            qualifierCombinations = getAllCombinations(qualifiers);
+            for (List<Label> qualifierCombination : qualifierCombinations) {
+                for (List<Label> summarizerCombination : summarizerCombinations) {
+                    StringBuilder sentence = new StringBuilder();
+                    if (qualifierCombination.isEmpty()) {
+                        sentence.append(quantifier.toString()).append(" products have ");
+                    } else {
+                        sentence.append(quantifier.toString()).append(" products that are/have ");
+                        for (int i = 0; i < qualifierCombination.size(); i++) {
+                            if (i > 0) {
+                                sentence.append(" and ");
+                            }
+                            sentence.append(qualifierCombination.get(i).toString());
+                        }
+                        sentence.append(" are/have ");
+                    }
+                    for (int i = 0; i < summarizerCombination.size(); i++) {
                         if (i > 0) {
                             sentence.append(" and ");
                         }
-                        sentence.append(qualifierCombination.get(i).toString());
+                        sentence.append(summarizerCombination.get(i).toString());
                     }
-                    sentence.append(" have ");
+                    sentences.add(sentence.toString());
                 }
+            }
+        } else {
+            for (List<Label> summarizerCombination : summarizerCombinations) {
+                StringBuilder sentence = new StringBuilder();
+                sentence.append(quantifier.toString()).append(" products are/have ");
                 for (int i = 0; i < summarizerCombination.size(); i++) {
                     if (i > 0) {
                         sentence.append(" and ");

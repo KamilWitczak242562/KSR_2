@@ -5,5 +5,5 @@ public interface MembershipFunction {
 
     double getCardinalNumber();
 
-    double getSupport(double x);
+    double getSupport();
 }

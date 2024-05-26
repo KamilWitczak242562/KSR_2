@@ -33,11 +33,7 @@ public class Triangular implements MembershipFunction {
     }
 
     @Override
-    public double getSupport(double x) {
-        if (x > a && x < c) {
-            return 1.0;
-        } else {
-            return 0.0;
-        }
+    public double getSupport() {
+       return c - a;
     }
 }

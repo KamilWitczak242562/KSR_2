@@ -28,4 +28,8 @@ public class ClassicSet {
         return set.contains(value);
     }
 
+    public double universe() {
+        return set.getLast() - set.getFirst();
+    }
+
 }

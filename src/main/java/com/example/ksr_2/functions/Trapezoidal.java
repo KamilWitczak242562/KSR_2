@@ -30,15 +30,11 @@ public class Trapezoidal implements MembershipFunction {
 
     @Override
     public double getCardinalNumber() {
-        return 0.5 * ((b - a) + (d - c));
+        return 0.5 * ((d - a) + (c - b));
     }
 
     @Override
-    public double getSupport(double x) {
-        if (x > a && x < d) {
-            return 1.0;
-        } else {
-            return 0.0;
-        }
+    public double getSupport() {
+        return d - a;
     }
 }

@@ -89,8 +89,8 @@ public class FuzzySet{
             }
 
             @Override
-            public double getSupport(double x) {
-                return membershipFunction.getSupport(x);
+            public double getSupport() {
+                return membershipFunction.getSupport();
             }
         };
 
