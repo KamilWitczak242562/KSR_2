@@ -9,9 +9,9 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LinguisticVariable<T> {
-    private List<Label<T>> labels;
-    private ClassicSet<T> universe;
+public class LinguisticVariable {
+    private List<Label> labels;
+    private ClassicSet universe;
     private String name;
 
 }

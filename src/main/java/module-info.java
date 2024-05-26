@@ -9,4 +9,6 @@ module com.example.ksr_2 {
 
     opens com.example.ksr_2 to javafx.fxml;
     exports com.example.ksr_2;
+    exports com.example.ksr_2.gui;
+    opens com.example.ksr_2.gui to javafx.fxml;
 }

@@ -9,22 +9,23 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ClassicSet<T> {
-    private List<T> set;
+public class ClassicSet {
+    private List<Double> set;
 
     public boolean isEmpty() {
         return set.isEmpty();
     }
 
-    public void add(T value) {
+    public void add(double value) {
         set.add(value);
     }
 
-    public void remove(T value) {
+    public void remove(double value) {
         set.remove(value);
     }
 
-    public boolean isIn(T value) {
+    public boolean isIn(double value) {
         return set.contains(value);
     }
+
 }

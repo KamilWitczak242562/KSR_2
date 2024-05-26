@@ -7,11 +7,21 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Label<T> {
-    private FuzzySet<T> fuzzySet;
+public class Label {
+    private FuzzySet fuzzySet;
     private String labelName;
-
+    private String linguisticVariable;
     public double getMembership(double value) {
-        return 0;
+        return fuzzySet.getMembership(value);
+    }
+
+    public Label(FuzzySet fuzzySet, String labelName) {
+        this.fuzzySet = fuzzySet;
+        this.labelName = labelName;
+    }
+
+    @Override
+    public String toString() {
+        return labelName;
     }
 }

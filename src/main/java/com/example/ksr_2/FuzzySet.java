@@ -13,36 +13,87 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-public class FuzzySet<T> {
+public class FuzzySet{
     private MembershipFunction membershipFunction;
-    private ClassicSet<T> universe;
+    private ClassicSet universe;
 
-    public List<T> getSupport() {
-        return null;
+    public List<Double> getSupport(List<Double> values) {
+        List<Double> support = new ArrayList<>();
+        for (double element : values) {
+            if (membershipFunction.getMembership(element) > 0) {
+                support.add(element);
+            }
+        }
+        return support;
     }
 
     public double getMembership(double value) {
         return membershipFunction.getMembership(value);
     }
 
-    public double degreeOfFuzziness() {
-        return 0.0;
+    public double degreeOfFuzziness(List<Double> values) {
+        double cardinalNumber = getCardinalNumber(values);
+        double classicalCardinalNumber = getSupport(values).size();
+        if (classicalCardinalNumber == 0) {
+            return 0.0;
+        }
+        return cardinalNumber / classicalCardinalNumber;
+    }
+
+    public double getCardinalNumber(List<Double> values) {
+        double sum = 0.0;
+        for (double value: values) {
+            sum += membershipFunction.getMembership(value);
+        }
+        return sum;
+    }
+
+    public ClassicSet getAlphaCut(double cut) {
+        ClassicSet alphaCutSet = new ClassicSet(new ArrayList<>());
+        for (double element : universe.getSet()) {
+            if (membershipFunction.getMembership(element) >= cut) {
+                alphaCutSet.add(element);
+            }
+        }
+        return alphaCutSet;
     }
 
     public boolean isConvex() {
-        return false;
+        for (double x1 : universe.getSet()) {
+            for (double x2 : universe.getSet()) {
+                if (x1 < x2) {
+                    double x = 0.5 * (x1 + x2);
+                    if (membershipFunction.getMembership(x) < Math.min(membershipFunction.getMembership(x1), membershipFunction.getMembership(x2))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-    public double getCardinalNumber() {
-        return 0.0;
-    }
+    public FuzzySet getComplement() {
+        MembershipFunction complementFunction = new MembershipFunction() {
+            @Override
+            public double getMembership(double x) {
+                return 1.0 - membershipFunction.getMembership(x);
+            }
 
-    public ClassicSet<T> getAlphaCut(double cut) {
-        return this.universe;
-    }
+            @Override
+            public double getCardinalNumber() {
+                double cardinalNumber = 0.0;
+                for (double element : universe.getSet()) {
+                    cardinalNumber += 1.0 - membershipFunction.getMembership(element);
+                }
+                return cardinalNumber;
+            }
 
-    public FuzzySet<T> getComplement() {
-        return new FuzzySet<>();
+            @Override
+            public double getSupport(double x) {
+                return membershipFunction.getSupport(x);
+            }
+        };
+
+        return new FuzzySet(complementFunction, universe);
     }
 }

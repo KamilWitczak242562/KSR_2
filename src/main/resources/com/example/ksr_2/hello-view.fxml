@@ -4,8 +4,8 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
@@ -15,9 +15,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="595.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="595.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ksr_2.gui.HelloController">
     <children>
-        <TabPane layoutX="-4.0" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE">
+        <TabPane layoutX="-4.0" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE" visible="false">
             <tabs>
                 <Tab text="Kwantyfikator">
                     <content>
@@ -94,29 +94,41 @@
                 <MenuItem fx:id="option3" mnemonicParsing="false" text="Zaawansowane" />
             </items>
         </MenuButton>
-        <TabPane fx:id="tabPane" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+        <TabPane fx:id="tabPane" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="Parametry">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TreeView fx:id="treeView1" layoutX="17.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
-                                <TreeView fx:id="treeView2" layoutX="324.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
-                                <TreeView fx:id="treeView3" layoutX="623.0" layoutY="70.0" prefHeight="364.0" prefWidth="200.0" />
-                                <Button layoutX="387.0" layoutY="464.0" mnemonicParsing="false" text="Generuj" />
+                                <TreeView fx:id="W" layoutX="235.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
+                                <TreeView fx:id="S" layoutX="548.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
+                                <Button fx:id="buttonGenerate" layoutX="387.0" layoutY="464.0" mnemonicParsing="false" text="Generuj" />
                                 <Label layoutX="78.0" layoutY="25.0" text="Kwantyfikatory" />
-                                <Label layoutX="382.0" layoutY="25.0" text="Kwalifikatory" />
-                                <Label layoutX="682.0" layoutY="25.0" text="Summaryzatory" />
-                                <CheckBox layoutX="17.0" layoutY="90.0" mnemonicParsing="false" text="About half" />
-                                <CheckBox layoutX="324.0" layoutY="90.0" mnemonicParsing="false" text="High level of vitamin C" />
-                                <CheckBox layoutX="623.0" layoutY="90.0" mnemonicParsing="false" text="Low level of sugar" />
+                                <Label layoutX="346.0" layoutY="25.0" text="Kwalifikatory" />
+                                <Label layoutX="652.0" layoutY="25.0" text="Summaryzatory" />
+                        <Label layoutX="17.0" layoutY="390.0" text="Wagi" />
+                        <TextField fx:id="t1" layoutX="20.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T1" />
+                        <TextField fx:id="t2" layoutX="80.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T2" />
+                        <TextField fx:id="t3" layoutX="140.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T3" />
+                        <TextField fx:id="t4" layoutX="200.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T4" />
+                        <TextField fx:id="t5" layoutX="260.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T5" />
+                        <TextField fx:id="t6" layoutX="320.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T6" />
+                        <TextField fx:id="t7" layoutX="380.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T7" />
+                        <TextField fx:id="t10" layoutX="560.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T10" />
+                        <TextField fx:id="t8" layoutX="440.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T8" />
+                        <TextField fx:id="t11" layoutX="620.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T11" />
+                        <TextField fx:id="t9" layoutX="500.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T9" />
+                        <TreeView fx:id="Q" layoutX="20.0" layoutY="60.0" prefHeight="315.0" prefWidth="200.0" />
                             </children>
                         </AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Wyniki">
                     <content>
-                        <AnchorPane fx:id="wynikiTabContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane fx:id="wynikiTabContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="view" layoutX="14.0" layoutY="14.0" prefHeight="504.0" prefWidth="822.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                     </children></AnchorPane>
                     </content>
                 </Tab>
             </tabs>
