@@ -72,7 +72,6 @@ public class Measures {
                     sum += Collections.min(getMin);
                     getMin.removeAll(getMin);
                 }
-                System.out.println("Sum dla q abs " + sum);
                 return getQuantifier().getMembership(sum);
             } else {
                 for (FoodEntry foodEntry : getObjects1()) {
@@ -82,7 +81,6 @@ public class Measures {
                     sum += Collections.min(getMin);
                     getMin.removeAll(getMin);
                 }
-                System.out.println("sum dla q rel " +  sum / getObjects1().size());
                 return getQuantifier().getMembership(sum / getObjects1().size());
             }
         } else {

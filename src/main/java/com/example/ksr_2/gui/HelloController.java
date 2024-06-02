@@ -2,14 +2,20 @@ package com.example.ksr_2.gui;
 
 import com.example.ksr_2.Label;
 import com.example.ksr_2.*;
+import com.example.ksr_2.functions.Gaussian;
+import com.example.ksr_2.functions.MembershipFunction;
+import com.example.ksr_2.functions.Trapezoidal;
+import com.example.ksr_2.functions.Triangular;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.Chart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -17,7 +23,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 
 public class HelloController implements Initializable {
     @FXML
@@ -61,21 +66,301 @@ public class HelloController implements Initializable {
     private TextField t11;
 
     @FXML
-    private Button buttonGenerate;
-
-    @FXML
     private ListView<String> view;
 
+    @FXML
+    private TabPane tabPaneOne;
+
+    @FXML
+    private TabPane tabPaneFun;
+
+    @FXML
+    private TextField nameQ;
+
+    @FXML
+    private TextField startQ;
+
+    @FXML
+    private TextField endQ;
+
+    @FXML
+    private TextField bQ;
+
+    @FXML
+    private TextField aQ;
+
+    @FXML
+    private TextField cQ;
+
+    @FXML
+    private TextField dQ;
+
+    @FXML
+    private TextField bS;
+
+    @FXML
+    private TextField aS;
+
+    @FXML
+    private TextField cS;
+
+    @FXML
+    private TextField dS;
+
+    @FXML
+    private TextField nameS;
+
+    @FXML
+    private TextField startS;
+
+    @FXML
+    private TextField endS;
+
+    @FXML
+    private TextField nameSLing;
+
+    @FXML
+    private LineChart chartS;
+
+    @FXML
+    private LineChart chartQ;
+
     private ObservableList<String> summariesList;
+    private ObservableList<String> summariesTwoList;
 
     private List<Summary> summaries;
+    private List<SummaryTwo> summariesTwo;
+
+    private List<Quantifier> quantifiersNew;
+    private List<Label> summariesNew;
+
+    private boolean isAbs;
+    private boolean gauss;
+    private boolean trap;
+    private boolean trian;
+
+    private boolean gaussS;
+    private boolean trapS;
+    private boolean trianS;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeTreeViewQ();
         initializeTreeViewW();
         initializeTreeViewS();
-        buttonGenerate.setOnAction(event -> generate());
+    }
+
+    @FXML
+    public void chooseGenerate() {
+        tabPaneOne.setVisible(true);
+        tabPaneFun.setVisible(false);
+    }
+
+    @FXML
+    public void chooseCreate() {
+        tabPaneOne.setVisible(false);
+        tabPaneFun.setVisible(true);
+    }
+
+    private void drawMembershipFunctionChart(LineChart<Number, Number> chart, MembershipFunction function, List<Double> universe) {
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        List<Double> newUniverse = new ArrayList<>();
+        for (double i = universe.getFirst(); i < universe.getLast(); i++) {
+            newUniverse.add(i);
+        }
+        for (double x : newUniverse) {
+            series.getData().add(new XYChart.Data<>(x, function.getMembership(x)));
+        }
+        chart.getData().clear();
+        chart.getData().add(series);
+    }
+
+    @FXML
+    public void createS() {
+        MembershipFunction membershipFunction = null;
+        summariesNew = new ArrayList<>();
+        List<Double> universe = new ArrayList<>(){{
+            for (double i = Double.parseDouble(startS.getText()); i <= Double.parseDouble(endS.getText()); i += 0.01) {
+                add(i);
+            }
+        }};
+        Label summarizer;
+        ClassicSet classicSet = new ClassicSet(universe);
+        FuzzySet fuzzySet;
+        if (gaussS) {
+            membershipFunction = new Gaussian(Double.parseDouble(bS.getText()), Double.parseDouble(aS.getText()));
+        }
+        if (trapS) {
+            membershipFunction = new Trapezoidal(Double.parseDouble(aS.getText()), Double.parseDouble(bS.getText()),
+                    Double.parseDouble(cS.getText()), Double.parseDouble(dS.getText()));
+        }
+        if (trianS) {
+            membershipFunction = new Triangular(Double.parseDouble(aS.getText()), Double.parseDouble(bS.getText()), Double.parseDouble(cS.getText()));
+        }
+        fuzzySet= new FuzzySet(membershipFunction, classicSet);
+        summarizer = new Label(fuzzySet, nameS.getText(), nameSLing.getText());
+        summariesNew.add(summarizer);
+
+        TreeItem<String> newSItem = createCheckBoxTreeItem(nameS.getText());
+        TreeItem<String> absoluteNode = findTreeItem(S.getRoot(), "User's");
+        if (absoluteNode != null) {
+            absoluteNode.getChildren().add(newSItem);
+        }
+        TreeItem<String> absoluteNodeW = findTreeItem(W.getRoot(), "User's");
+        if (absoluteNodeW != null) {
+            absoluteNodeW.getChildren().add(newSItem);
+        }
+
+        drawMembershipFunctionChart(chartS, membershipFunction, universe);
+    }
+
+    @FXML
+    public void chooseGaussS() {
+        gaussS = true;
+        trapS = false;
+        trianS = false;
+        aS.setVisible(true);
+        bS.setVisible(true);
+        aS.setPromptText("stdev");
+        bS.setPromptText("mean");
+        cS.setVisible(false);
+        dS.setVisible(false);
+    }
+
+    @FXML
+    public void chooseTrapS() {
+        trapS = true;
+        gaussS = false;
+        trianS = false;
+        aS.setVisible(true);
+        bS.setVisible(true);
+        cS.setVisible(true);
+        dS.setVisible(true);
+        aS.setPromptText("a");
+        bS.setPromptText("b");
+        cS.setPromptText("c");
+        dS.setPromptText("d");
+    }
+
+    @FXML
+    public void chooseTrianS() {
+        trapS = false;
+        gaussS = false;
+        trianS = true;
+        aS.setVisible(true);
+        bS.setVisible(true);
+        cS.setVisible(true);
+        dS.setVisible(false);
+        aS.setPromptText("a");
+        bS.setPromptText("b");
+        cS.setPromptText("c");
+    }
+
+    @FXML
+    public void createQ() {
+        MembershipFunction membershipFunction = null;
+        quantifiersNew = new ArrayList<>();
+        List<Double> universe = new ArrayList<>(){{
+            for (double i = Double.parseDouble(startQ.getText()); i <= Double.parseDouble(endQ.getText()); i += 0.01) {
+                add(i);
+            }
+        }};
+        Quantifier quantifier;
+        ClassicSet classicSet = new ClassicSet(universe);
+        FuzzySet fuzzySet;
+        if (gauss) {
+            membershipFunction = new Gaussian(Double.parseDouble(bQ.getText()), Double.parseDouble(aQ.getText()));
+        }
+        if (trap) {
+            membershipFunction = new Trapezoidal(Double.parseDouble(aQ.getText()), Double.parseDouble(bQ.getText()),
+                    Double.parseDouble(cQ.getText()), Double.parseDouble(dQ.getText()));
+        }
+        if (trian) {
+            membershipFunction = new Triangular(Double.parseDouble(aQ.getText()), Double.parseDouble(bQ.getText()), Double.parseDouble(cQ.getText()));
+        }
+        fuzzySet= new FuzzySet(membershipFunction, classicSet);
+        quantifier = new Quantifier(fuzzySet, nameQ.getText(), isAbs);
+        quantifiersNew.add(quantifier);
+
+        TreeItem<String> newQuantifierItem = createCheckBoxTreeItem(nameQ.getText());
+        if (isAbs) {
+            TreeItem<String> absoluteNode = findTreeItem(Q.getRoot(), "Absolutne");
+            if (absoluteNode != null) {
+                absoluteNode.getChildren().add(newQuantifierItem);
+            }
+        } else {
+            TreeItem<String> relativeNode = findTreeItem(Q.getRoot(), "Relatywne");
+            if (relativeNode != null) {
+                relativeNode.getChildren().add(newQuantifierItem);
+            }
+        }
+
+        drawMembershipFunctionChart(chartQ, membershipFunction, universe);
+    }
+
+    private TreeItem<String> findTreeItem(TreeItem<String> root, String value) {
+        if (root.getValue().equals(value)) {
+            return root;
+        }
+        for (TreeItem<String> child : root.getChildren()) {
+            TreeItem<String> result = findTreeItem(child, value);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    @FXML
+    public void chooseGauss() {
+        gauss = true;
+        trap = false;
+        trian = false;
+        aQ.setVisible(true);
+        bQ.setVisible(true);
+        aQ.setPromptText("stdev");
+        bQ.setPromptText("mean");
+        cQ.setVisible(false);
+        dQ.setVisible(false);
+    }
+
+    @FXML
+    public void chooseTrap() {
+        trap = true;
+        gauss = false;
+        trian = false;
+        aQ.setVisible(true);
+        bQ.setVisible(true);
+        cQ.setVisible(true);
+        dQ.setVisible(true);
+        aQ.setPromptText("a");
+        bQ.setPromptText("b");
+        cQ.setPromptText("c");
+        dQ.setPromptText("d");
+    }
+
+    @FXML
+    public void chooseTrian() {
+        trap = false;
+        gauss = false;
+        trian = true;
+        aQ.setVisible(true);
+        bQ.setVisible(true);
+        cQ.setVisible(true);
+        dQ.setVisible(false);
+        aQ.setPromptText("a");
+        bQ.setPromptText("b");
+        cQ.setPromptText("c");
+    }
+
+    @FXML
+    public void chooseAbs() {
+        isAbs = true;
+    }
+
+    @FXML
+    public void chooseRel() {
+        isAbs = false;
     }
 
     private List<FoodEntry> loadFoodEntries() {
@@ -89,7 +374,7 @@ public class HelloController implements Initializable {
                 FoodEntry entry = new FoodEntry(
                         idCounter++,
                         Double.parseDouble(line[1]),
-                        Double.parseDouble(line[2]),
+                        line[2],
                         Double.parseDouble(line[3]),
                         Double.parseDouble(line[4]),
                         Double.parseDouble(line[5]),
@@ -98,20 +383,209 @@ public class HelloController implements Initializable {
                         Double.parseDouble(line[8]),
                         Double.parseDouble(line[9]),
                         Double.parseDouble(line[10]),
-                        Double.parseDouble(line[11])
+                        Double.parseDouble(line[11]),
+                        Double.parseDouble(line[12])
                 );
                 foodEntries.add(entry);
             }
-        } catch (CsvValidationException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return foodEntries;
     }
 
-    private void generate() {
+    private List<List<FoodEntry>> splitFoodEntry(List<FoodEntry> foodEntries) {
+        List<List<FoodEntry>> meatNotMeat = new ArrayList<>();
+        List<FoodEntry> meat = new ArrayList<>();
+        List<FoodEntry> notMeat = new ArrayList<>();
+        for (FoodEntry foodEntry : foodEntries) {
+            if (foodEntry.getIngredients().toLowerCase().contains("meat") || foodEntry.getIngredients().toLowerCase().contains("beef") ||
+                    foodEntry.getIngredients().toLowerCase().contains("chicken") || foodEntry.getIngredients().toLowerCase().contains("pork")) {
+                meat.add(foodEntry);
+            } else {
+                notMeat.add(foodEntry);
+            }
+        }
+        meatNotMeat.add(meat);
+        meatNotMeat.add(notMeat);
+        return meatNotMeat;
+    }
+
+    @FXML
+    private void generateTwo() {
         List<CheckedItem> checkedItemsQ = getCheckedItems(Q);
+        List<Quantifier> checkedNewQs = new ArrayList<>();
+        if (quantifiersNew != null) {
+            for (Quantifier quantifier: quantifiersNew) {
+                for (CheckedItem checkedItem: checkedItemsQ) {
+                    if (quantifier.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewQs.add(quantifier);
+                        checkedItemsQ.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
         List<CheckedItem> checkedItemsW = getCheckedItems(W);
+        List<Label> checkedNewWs = new ArrayList<>();
+        if (summariesNew != null) {
+            for (Label label: summariesNew) {
+                for (CheckedItem checkedItem: checkedItemsW) {
+                    if (label.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewWs.add(label);
+                        checkedItemsW.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
         List<CheckedItem> checkedItemsS = getCheckedItems(S);
+        List<Label> checkedNewSs = new ArrayList<>();
+        if (summariesNew != null) {
+            for (Label label: summariesNew) {
+                for (CheckedItem checkedItem: checkedItemsS) {
+                    if (label.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewSs.add(label);
+                        checkedItemsS.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
+
+        List<FoodEntry> foodEntries = loadFoodEntries();
+        List<List<FoodEntry>> split = splitFoodEntry(foodEntries);
+
+        List<Label> ws = new ArrayList<>();
+        List<Label> ss = new ArrayList<>();
+
+        List<String> uniqueW = checkedItemsW.stream()
+                .map(CheckedItem::getCategory).distinct().toList();
+
+        List<String> uniqueS = checkedItemsS.stream()
+                .map(CheckedItem::getCategory).distinct().toList();
+
+        for (String name : uniqueW) {
+            ws.addAll(LabelFactory.createLinguisticVariable(name.toLowerCase()).getLabels());
+        }
+
+        for (String name : uniqueS) {
+            ss.addAll(LabelFactory.createLinguisticVariable(name.toLowerCase()).getLabels());
+        }
+
+        Set<String> checkedItemNamesW = checkedItemsW.stream()
+                .map(CheckedItem::getItem)
+                .collect(Collectors.toSet());
+
+        Set<String> checkedItemNamesS = checkedItemsS.stream()
+                .map(CheckedItem::getItem)
+                .collect(Collectors.toSet());
+
+        ws.removeIf(label -> !checkedItemNamesW.contains(label.getLabelName()));
+
+        ss.removeIf(label -> !checkedItemNamesS.contains(label.getLabelName()));
+
+        ss.addAll(checkedNewSs);
+        ws.addAll(checkedNewWs);
+
+        summariesTwo = new ArrayList<>();
+        for (CheckedItem checkedItem : checkedItemsQ) {
+            if (checkedItem.getCategory().equals("Absolutne")) {
+                Quantifier quantifier = LabelFactory.createQuantifier(checkedItem.getItem().toLowerCase(), true);
+                if (ws.isEmpty()) {
+                    summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+                } else {
+                    summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+                }
+            } else {
+                Quantifier quantifier = LabelFactory.createQuantifier(checkedItem.getItem().toLowerCase(), false);
+                if (ws.isEmpty()) {
+                    summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+                } else {
+                    summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+                }
+            }
+        }
+        for (Quantifier quantifier: checkedNewQs) {
+            if (ws.isEmpty()) {
+                summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+            } else {
+                summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+            }
+        }
+        generateResultsTwo();
+    }
+
+    public void generateResultsTwo() {
+        List<TwoSummary> twoSummaries = new ArrayList<>();
+        for (SummaryTwo summaryTwo : summariesTwo) {
+            List<TwoSummary> generatedSummaries = summaryTwo.generateAllDualSummaries();
+            Iterator<TwoSummary> iterator = generatedSummaries.iterator();
+            while (iterator.hasNext()) {
+                TwoSummary twoSummary = iterator.next();
+                if (twoSummary.getQuality() == 0.0 || Double.isNaN(twoSummary.getQuality())) {
+                    iterator.remove();
+                }
+            }
+            twoSummaries.addAll(generatedSummaries);
+        }
+
+        twoSummaries.sort(Comparator.comparingDouble(TwoSummary::getQuality).reversed());
+
+        for (TwoSummary twoSummary : twoSummaries) {
+            twoSummary.saveToCsv();
+        }
+
+        summariesTwoList = FXCollections.observableArrayList(
+                twoSummaries.stream().map(TwoSummary::toString).collect(Collectors.toList())
+        );
+        for (String oneSummary : summariesTwoList) {
+            System.out.println(oneSummary);
+        }
+        view.setItems(summariesTwoList);
+    }
+
+    @FXML
+    private void generateOne() {
+        List<CheckedItem> checkedItemsQ = getCheckedItems(Q);
+        List<Quantifier> checkedNewQs = new ArrayList<>();
+        if (quantifiersNew != null) {
+            for (Quantifier quantifier: quantifiersNew) {
+                for (CheckedItem checkedItem: checkedItemsQ) {
+                    if (quantifier.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewQs.add(quantifier);
+                        checkedItemsQ.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
+        List<CheckedItem> checkedItemsW = getCheckedItems(W);
+        List<Label> checkedNewWs = new ArrayList<>();
+        if (summariesNew != null) {
+            for (Label label: summariesNew) {
+                for (CheckedItem checkedItem: checkedItemsW) {
+                    if (label.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewWs.add(label);
+                        checkedItemsW.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
+        List<CheckedItem> checkedItemsS = getCheckedItems(S);
+        List<Label> checkedNewSs = new ArrayList<>();
+        if (summariesNew != null) {
+            for (Label label: summariesNew) {
+                for (CheckedItem checkedItem: checkedItemsS) {
+                    if (label.getLabelName().equals(checkedItem.getItem())) {
+                        checkedNewSs.add(label);
+                        checkedItemsS.remove(checkedItem);
+                        break;
+                    }
+                }
+            }
+        }
         List<Double> weights;
 
         List<FoodEntry> foodEntries = loadFoodEntries();
@@ -175,6 +649,9 @@ public class HelloController implements Initializable {
 
         ss.removeIf(label -> !checkedItemNamesS.contains(label.getLabelName()));
 
+        ws.addAll(checkedNewWs);
+        ss.addAll(checkedNewSs);
+
         summaries = new ArrayList<>();
         for (CheckedItem checkedItem : checkedItemsQ) {
             if (checkedItem.getCategory().equals("Absolutne")) {
@@ -193,6 +670,13 @@ public class HelloController implements Initializable {
                 }
             }
         }
+        for (Quantifier quantifier: checkedNewQs) {
+            if (ws.isEmpty()) {
+                summaries.add(new Summary(quantifier, ss, foodEntries, weights));
+            } else {
+                summaries.add(new Summary(quantifier, ws, ss, foodEntries, weights));
+            }
+        }
         generateResults();
     }
 
@@ -200,15 +684,26 @@ public class HelloController implements Initializable {
         List<OneSummary> oneSummaries = new ArrayList<>();
         for (Summary summary : summaries) {
             List<OneSummary> generatedSummaries = summary.generateAllOneSummaries();
+            Iterator<OneSummary> iterator = generatedSummaries.iterator();
+            while (iterator.hasNext()) {
+                OneSummary oneSummary = iterator.next();
+                if (oneSummary.getQuality() == 0.0) {
+                    iterator.remove();
+                }
+            }
             oneSummaries.addAll(generatedSummaries);
         }
 
         oneSummaries.sort(Comparator.comparingDouble(OneSummary::getQuality).reversed());
 
+        for (OneSummary oneSummary : oneSummaries) {
+            oneSummary.saveToCsv();
+        }
+
         summariesList = FXCollections.observableArrayList(
                 oneSummaries.stream().map(OneSummary::toString).collect(Collectors.toList())
         );
-        for (String oneSummary: summariesList) {
+        for (String oneSummary : summariesList) {
             System.out.println(oneSummary);
         }
         view.setItems(summariesList);
@@ -296,6 +791,7 @@ public class HelloController implements Initializable {
         TreeItem<String> rootItem8 = new TreeItem<>("Magnesium");
         TreeItem<String> rootItem9 = new TreeItem<>("Vitamin C");
         TreeItem<String> rootItem10 = new TreeItem<>("Vitamin B6");
+        TreeItem<String> rootItem11 = new TreeItem<>("User's");
         rootItem1.setExpanded(true);
         rootItem2.setExpanded(true);
         rootItem3.setExpanded(true);
@@ -306,6 +802,7 @@ public class HelloController implements Initializable {
         rootItem8.setExpanded(true);
         rootItem9.setExpanded(true);
         rootItem10.setExpanded(true);
+        rootItem11.setExpanded(true);
 
         rootItem1.getChildren().addAll(
                 createCheckBoxTreeItem("low level of carbohydrates"),
@@ -384,7 +881,8 @@ public class HelloController implements Initializable {
                 rootItem7,
                 rootItem8,
                 rootItem9,
-                rootItem10
+                rootItem10,
+                rootItem11
         );
 
         W.setRoot(rootItemW);
@@ -410,6 +908,7 @@ public class HelloController implements Initializable {
         TreeItem<String> rootItem8 = new TreeItem<>("Magnesium");
         TreeItem<String> rootItem9 = new TreeItem<>("Vitamin C");
         TreeItem<String> rootItem10 = new TreeItem<>("Vitamin B6");
+        TreeItem<String> rootItem11 = new TreeItem<>("User's");
         rootItem1.setExpanded(true);
         rootItem2.setExpanded(true);
         rootItem3.setExpanded(true);
@@ -420,6 +919,7 @@ public class HelloController implements Initializable {
         rootItem8.setExpanded(true);
         rootItem9.setExpanded(true);
         rootItem10.setExpanded(true);
+        rootItem11.setExpanded(true);
 
         rootItem1.getChildren().addAll(
                 createCheckBoxTreeItem("low level of carbohydrates"),
@@ -498,7 +998,8 @@ public class HelloController implements Initializable {
                 rootItem7,
                 rootItem8,
                 rootItem9,
-                rootItem10
+                rootItem10,
+                rootItem11
         );
 
         S.setRoot(rootItemS);

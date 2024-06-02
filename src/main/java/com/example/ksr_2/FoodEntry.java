@@ -10,6 +10,7 @@ import lombok.Setter;
 public class FoodEntry {
     private long id;
     private double servingSize;
+    private String ingredients;
     private double carbohydrate;
     private double cholesterol;
     private double energy;

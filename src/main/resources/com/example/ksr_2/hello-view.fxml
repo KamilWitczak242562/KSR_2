@@ -17,37 +17,41 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="595.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ksr_2.gui.HelloController">
     <children>
-        <TabPane layoutX="-4.0" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+        <TabPane fx:id="tabPaneFun" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="Kwantyfikator">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <MenuButton layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Typ kwantyfikatora">
+                                <MenuButton fx:id="typeQ" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Typ kwantyfikatora">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Względny" />
-                                        <MenuItem mnemonicParsing="false" text="Absolutny" />
+                                        <MenuItem fx:id="rel" mnemonicParsing="false" onAction="#chooseRel" text="Względny" />
+                                        <MenuItem fx:id="abs" mnemonicParsing="false" onAction="#chooseAbs" text="Absolutny" />
                                     </items>
                                 </MenuButton>
-                                <TextField layoutX="14.0" layoutY="101.0" promptText="Nazwa" />
-                                <TextField layoutX="14.0" layoutY="138.0" promptText="Początek zakresu" />
-                                <LineChart layoutX="194.0" layoutY="39.0" prefHeight="485.0" prefWidth="653.0">
+                                <TextField fx:id="nameQ" layoutX="14.0" layoutY="101.0" promptText="Nazwa" />
+                                <TextField fx:id="startQ" layoutX="14.0" layoutY="138.0" promptText="Początek zakresu" />
+                                <LineChart fx:id="chartQ" layoutX="169.0" layoutY="2.0" prefHeight="522.0" prefWidth="678.0">
                                     <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
+                                        <NumberAxis label="X Axis Label" />
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis label="Y Axis Label" />
                                     </yAxis>
                                 </LineChart>
                                 <MenuButton layoutX="14.0" layoutY="61.0" mnemonicParsing="false" text="Typ funkcji">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Guss" />
-                                        <MenuItem mnemonicParsing="false" text="Trapezoidalna" />
-                                        <MenuItem mnemonicParsing="false" text="Trójkątna" />
+                                        <MenuItem fx:id="gaussQ" mnemonicParsing="false" onAction="#chooseGauss" text="Gauss" />
+                                        <MenuItem fx:id="trapezoidalQ" mnemonicParsing="false" onAction="#chooseTrap" text="Trapezoidalna" />
+                                        <MenuItem fx:id="triangularQ" mnemonicParsing="false" onAction="#chooseTrian" text="Trójkątna" />
                                     </items>
                                 </MenuButton>
-                                <TextField layoutX="14.0" layoutY="176.0" promptText="Koniec zakresu" />
-                                <Button layoutX="78.0" layoutY="392.0" mnemonicParsing="false" text="Stwórz" />
+                                <TextField fx:id="endQ" layoutX="14.0" layoutY="176.0" promptText="Koniec zakresu" />
+                                <Button fx:id="createQ" layoutX="78.0" layoutY="392.0" mnemonicParsing="false" onAction="#createQ" text="Stwórz" />
+                        <TextField fx:id="aQ" layoutX="14.0" layoutY="230.0" visible="false" />
+                        <TextField fx:id="bQ" layoutX="14.0" layoutY="263.0" visible="false" />
+                        <TextField fx:id="cQ" layoutX="14.0" layoutY="300.0" visible="false" />
+                        <TextField fx:id="dQ" layoutX="14.0" layoutY="338.0" visible="false" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -56,45 +60,43 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <MenuButton layoutX="14.0" layoutY="28.0" mnemonicParsing="false" text="Wybierz argument">
+                                <TextField fx:id="nameS" layoutX="16.0" layoutY="62.0" promptText="Nazwa etykiety" />
+                                <MenuButton layoutX="16.0" layoutY="21.0" mnemonicParsing="false" text="Typ funkcji">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                        <MenuItem fx:id="gaussS" mnemonicParsing="false" onAction="#chooseGaussS" text="Gauss" />
+                                        <MenuItem fx:id="trapS" mnemonicParsing="false" onAction="#chooseTrapS" text="Trapezoidalna" />
+                                        <MenuItem fx:id="trianS" mnemonicParsing="false" onAction="#chooseTrianS" text="Trójkątna" />
                                     </items>
                                 </MenuButton>
-                                <TextField layoutX="16.0" layoutY="109.0" promptText="Nazwa" />
-                                <MenuButton layoutX="16.0" layoutY="67.0" mnemonicParsing="false" text="Typ funkcji">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" text="Guss" />
-                                        <MenuItem mnemonicParsing="false" text="Trapezoidalna" />
-                                        <MenuItem mnemonicParsing="false" text="Trójkątna" />
-                                    </items>
-                                </MenuButton>
-                                <TextField layoutX="16.0" layoutY="153.0" promptText="Początek zakresu" />
-                                <TextField layoutX="16.0" layoutY="197.0" promptText="Koniec zakresu" />
-                                <LineChart layoutX="180.0" layoutY="10.0" prefHeight="511.0" prefWidth="663.0">
+                                <TextField fx:id="startS" layoutX="16.0" layoutY="130.0" promptText="Początek zakresu" />
+                                <TextField fx:id="endS" layoutX="16.0" layoutY="172.0" promptText="Koniec zakresu" />
+                                <LineChart fx:id="chartS" layoutX="170.0" layoutY="9.0" prefHeight="512.0" prefWidth="673.0">
                                     <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
+                                        <NumberAxis label="X Axis Label" />
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis label="Y Axis Label" />
                                     </yAxis>
                                 </LineChart>
-                                <Button layoutX="80.0" layoutY="394.0" mnemonicParsing="false" text="Stwórz" />
+                                <Button layoutX="80.0" layoutY="394.0" mnemonicParsing="false" onAction="#createS" text="Stwórz" />
+                        <TextField fx:id="dS" layoutX="16.0" layoutY="330.0" visible="false" />
+                        <TextField fx:id="cS" layoutX="16.0" layoutY="284.0" visible="false" />
+                        <TextField fx:id="bS" layoutX="16.0" layoutY="238.0" visible="false" />
+                        <TextField fx:id="aS" layoutX="16.0" layoutY="197.0" visible="false" />
+                        <TextField fx:id="nameSLing" layoutX="16.0" layoutY="96.0" promptText="Nazwa z. lingiwstycznej" />
                             </children>
                         </AnchorPane>
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
-        <MenuButton layoutX="8.0" layoutY="8.0" mnemonicParsing="false" text="Zaawansowane">
+        <MenuButton fx:id="mainMenu" layoutX="8.0" layoutY="8.0" mnemonicParsing="false" text="Menu">
             <items>
-                <MenuItem fx:id="option1" mnemonicParsing="false" text="1 podmiotowe" />
-                <MenuItem fx:id="option2" mnemonicParsing="false" text="2 podmiotowe" />
-                <MenuItem fx:id="option3" mnemonicParsing="false" text="Zaawansowane" />
+                <MenuItem fx:id="generate" mnemonicParsing="false" onAction="#chooseGenerate" text="Generuj podsumowania" />
+                <MenuItem fx:id="create" mnemonicParsing="false" onAction="#chooseCreate" text="Zaawansowane" />
             </items>
         </MenuButton>
-        <TabPane fx:id="tabPane" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE">
+        <TabPane fx:id="tabPaneOne" layoutY="40.0" prefHeight="555.0" prefWidth="846.0" tabClosingPolicy="UNAVAILABLE" visible="false">
             <tabs>
                 <Tab text="Parametry">
                     <content>
@@ -102,7 +104,7 @@
                             <children>
                                 <TreeView fx:id="W" layoutX="235.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
                                 <TreeView fx:id="S" layoutX="548.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
-                                <Button fx:id="buttonGenerate" layoutX="387.0" layoutY="464.0" mnemonicParsing="false" text="Generuj" />
+                                <Button fx:id="buttonGenerateOne" layoutX="161.0" layoutY="459.0" mnemonicParsing="false" onAction="#generateOne" text="Generuj jednopodmiotowe" />
                                 <Label layoutX="78.0" layoutY="25.0" text="Kwantyfikatory" />
                                 <Label layoutX="346.0" layoutY="25.0" text="Kwalifikatory" />
                                 <Label layoutX="652.0" layoutY="25.0" text="Summaryzatory" />
@@ -119,6 +121,7 @@
                         <TextField fx:id="t11" layoutX="620.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T11" />
                         <TextField fx:id="t9" layoutX="500.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T9" />
                         <TreeView fx:id="Q" layoutX="20.0" layoutY="60.0" prefHeight="315.0" prefWidth="200.0" />
+                        <Button fx:id="buttonGenerateTwo" layoutX="445.0" layoutY="459.0" mnemonicParsing="false" onAction="#generateTwo" text="Generuj dwupodmiotowe" />
                             </children>
                         </AnchorPane>
                     </content>

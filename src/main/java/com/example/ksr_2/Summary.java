@@ -15,7 +15,6 @@ public class Summary {
     private List<Label> qualifiers;
     private List<Label> summarizers;
     private List<FoodEntry> objects1;
-    private List<FoodEntry> objects2;
     private List<OneSummary> oneSummaries;
     private List<Double> weights;
 
@@ -38,20 +37,29 @@ public class Summary {
     public List<OneSummary> generateAllOneSummaries() {
         List<OneSummary> allOneSummaries = new ArrayList<>();
         List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-
-        for (List<Label> currentSummarizers : summarizerCombinations) {
-            List<String> sentences = generateSentences(qualifiers, currentSummarizers);
-            for (String sentence : sentences) {
-                Measures measures1;
-                if (qualifiers == null || qualifiers.isEmpty()) {
-                    measures1 = new Measures(weights, quantifier, currentSummarizers, objects1);
-                } else {
-                    measures1 = new Measures(weights, quantifier, qualifiers, currentSummarizers, objects1);
+        List<List<Label>> qualifierCombinations;
+        if (qualifiers != null) {
+            qualifierCombinations = getAllCombinations(qualifiers);
+            for (List<Label> currentSummarizers : summarizerCombinations) {
+                for (List<Label> currentQualifiers: qualifierCombinations) {
+                    List<String> sentences = generateSentences(currentQualifiers, currentSummarizers);
+                    for (String sentence : sentences) {
+                        Measures measures1;
+                        measures1 = new Measures(weights, quantifier, currentQualifiers, currentSummarizers, objects1);
+                        allOneSummaries.add(new OneSummary(sentence, measures1));
+                    }
                 }
-                allOneSummaries.add(new OneSummary(sentence, measures1));
+            }
+        } else {
+            for (List<Label> currentSummarizers : summarizerCombinations) {
+                List<String> sentences = generateSentences(qualifiers, currentSummarizers);
+                for (String sentence : sentences) {
+                    Measures measures1;
+                    measures1 = new Measures(weights, quantifier, currentSummarizers, objects1);
+                    allOneSummaries.add(new OneSummary(sentence, measures1));
+                }
             }
         }
-
         return allOneSummaries;
     }
 
