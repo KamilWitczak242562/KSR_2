@@ -232,7 +232,7 @@ public class SummaryTwo {
         List<TwoSummary> sentences = new ArrayList<>();
         for (List<Label> summarizerCombination : summarizerCombinations) {
             StringBuilder sentence = new StringBuilder();
-            sentence.append("Meat free products compared to meat products are/have ");
+            sentence.append("More meat free products compared to meat products are/have ");
             for (int i = 0; i < summarizerCombination.size(); i++) {
                 if (i > 0) {
                     sentence.append(" and ");
