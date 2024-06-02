@@ -110,8 +110,8 @@ public class SummaryTwo {
                 }
 
                 quality = (sumWS/objects1.size()) / (sumWS/objects1.size() + sumTwo/objects2.size());
-
-                twoSummaries.add(new TwoSummary(sentence.toString(), quality));
+                double tq = quantifier.getMembership(quality);
+                twoSummaries.add(new TwoSummary(sentence.toString(), tq));
             }
         }
         return twoSummaries;
@@ -180,8 +180,8 @@ public class SummaryTwo {
                 }
 
                 quality = (sumOne/objects1.size()) / ((sumOne/objects1.size()) + (sumWS/objects2.size()));
-
-                twoSummaries.add(new TwoSummary(sentence.toString(), quality));
+                double tq = quantifier.getMembership(quality);
+                twoSummaries.add(new TwoSummary(sentence.toString(), tq));
             }
         }
         return twoSummaries;
@@ -221,7 +221,8 @@ public class SummaryTwo {
             sumOne = sumOne / objects1.size();
             sumTwo = sumTwo / objects2.size();
             quality = sumOne / (sumOne + sumTwo);
-            sentences.add(new TwoSummary(sentence.toString(), quality));
+            double tq = quantifier.getMembership(quality);
+            sentences.add(new TwoSummary(sentence.toString(), tq));
         }
         return sentences;
     }
@@ -258,7 +259,8 @@ public class SummaryTwo {
                 min.removeAll(min);
             }
             quality = 1 - calculateInclusionLukasiewicz(minS2, minS1);
-            sentences.add(new TwoSummary(sentence.toString(), quality));
+            double tq = quantifier.getMembership(quality);
+            sentences.add(new TwoSummary(sentence.toString(), tq));
         }
         return sentences;
     }
