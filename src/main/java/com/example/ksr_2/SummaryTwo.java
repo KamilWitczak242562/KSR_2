@@ -272,7 +272,7 @@ public class SummaryTwo {
             sumImplication += lukasiewiczImplication(a, b);
         }
 
-        return sumImplication / A.size();
+        return sumImplication / B.size();
     }
 
     public double lukasiewiczImplication(double a, double b) {
