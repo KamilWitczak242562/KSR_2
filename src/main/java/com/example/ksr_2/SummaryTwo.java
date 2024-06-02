@@ -205,7 +205,7 @@ public class SummaryTwo {
             List<Double> min = new ArrayList<>();
             for (FoodEntry foodEntry : objects1) {
                 for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 sumOne += Collections.min(min);
                 min.removeAll(min);
@@ -213,7 +213,7 @@ public class SummaryTwo {
 
             for (FoodEntry foodEntry : objects2) {
                 for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 sumTwo += Collections.min(min);
                 min.removeAll(min);
@@ -245,7 +245,7 @@ public class SummaryTwo {
             List<Double> minS2 = new ArrayList<>();
             for (FoodEntry foodEntry : objects1) {
                 for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 minS1.add(Collections.min(min));
                 min.removeAll(min);
@@ -253,7 +253,7 @@ public class SummaryTwo {
 
             for (FoodEntry foodEntry : objects2) {
                 for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
+                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
                 minS2.add(Collections.min(min));
                 min.removeAll(min);
