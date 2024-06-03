@@ -61,6 +61,7 @@ public class Measures {
     }
 
     public double calcT1() {
+        double t1 = 0.0;
         if (getQualifiers() == null) {
             List<Double> getMin = new ArrayList<>();
             double sum = 0;
@@ -81,7 +82,7 @@ public class Measures {
                     sum += Collections.min(getMin);
                     getMin.removeAll(getMin);
                 }
-                return getQuantifier().getMembership(sum / getObjects1().size());
+                t1 = getQuantifier().getMembership(sum / getObjects1().size());
             }
         } else {
             List<Double> getMin = new ArrayList<>();
@@ -122,12 +123,14 @@ public class Measures {
             }
             sumWandS = sumWandS / getObjects1().size();
             sumForW = sumForW / getObjects1().size();
-            return getQuantifier().getMembership(sumWandS / sumForW);
+            t1 = getQuantifier().getMembership(sumWandS / sumForW);
         }
+        return (double) Math.round(t1 * 100) / 100;
     }
 
     public double calcT2() {
         double p = 1.0;
+        double t2 = 0.0;
         List<Double> values = new ArrayList<>();
         for (Label label : getSummarizers()) {
             for (FoodEntry foodEntry : getObjects1()) {
@@ -136,13 +139,15 @@ public class Measures {
             p *= label.getFuzzySet().degreeOfFuzziness(values);
             values.removeAll(values);
         }
-        return 1 - Math.pow(p, 1.0 / getSummarizers().size());
+        t2 = 1 - Math.pow(p, 1.0 / getSummarizers().size());
+        return (double) Math.round(t2 * 100) / 100;
     }
 
     public double calcT3() {
         int t = 0;
         int h = 0;
         double membershipQ = 0.0;
+        double t3 = 0.0;
         List<Double> listQ = new ArrayList<>();
         for (FoodEntry foodEntry : getObjects1()) {
             if (getQualifiers() != null) {
@@ -166,9 +171,9 @@ public class Measures {
         }
         if (getQualifiers() != null) {
             if (h == 0 || t == 0) {
-                return 0.0;
+                t3 = 0.0;
             } else {
-                return (double) t / h;
+                t3 = (double) t / h;
             }
         } else {
             for (FoodEntry foodEntry : getObjects1()) {
@@ -181,12 +186,14 @@ public class Measures {
                     t++;
                 }
             }
-            return (double) t / getObjects1().size();
+            t3 = (double) t / getObjects1().size();
         }
+        return (double) Math.round(t3 * 100) / 100;
     }
 
     public double calcT4() {
         double p = 1.0;
+        double t4 = 0.0;
         for (Label label : getSummarizers()) {
             double r = 0.0;
             for (FoodEntry foodEntry : getObjects1()) {
@@ -196,14 +203,17 @@ public class Measures {
             }
             p *= r / getObjects1().size();
         }
-        return Math.abs(p - this.T3degreeOfCovering);
+        t4 = Math.abs(p - this.T3degreeOfCovering);
+        return (double) Math.round(t4 * 100) / 100;
     }
 
     public double calcT5() {
-        return 2 * Math.pow(0.5, getSummarizers().size());
+        double t5 = 2 * Math.pow(0.5, getSummarizers().size());
+        return (double) Math.round(t5 * 100) / 100;
     }
 
     public double calcT6() {
+        double t6 = 0.0;
         if (getQualifiers() != null) {
             List<Double> getMinQ = new ArrayList<>();
             List<Double> getMinS = new ArrayList<>();
@@ -237,9 +247,9 @@ public class Measures {
                 }
             }
             if (getQuantifier().isAbsolute()) {
-                return 1 - (double) suppQ.size() / getObjects1().size();
+                t6 = 1 - (double) suppQ.size() / getObjects1().size();
             } else {
-                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
+                t6 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
             }
         } else {
             List<Double> getMinS = new ArrayList<>();
@@ -258,14 +268,16 @@ public class Measures {
                 }
             }
             if (getQuantifier().isAbsolute()) {
-                return 1 - (double) suppQ.size() / getObjects1().size();
+                t6 = 1 - (double) suppQ.size() / getObjects1().size();
             } else {
-                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
+                t6 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
             }
         }
+        return (double) Math.round(t6 * 100) / 100;
     }
 
     public double calcT7() {
+        double t7 = 0.0;
         if (getQualifiers() != null) {
             List<Double> getMinQ = new ArrayList<>();
             List<Double> getMinS = new ArrayList<>();
@@ -299,9 +311,9 @@ public class Measures {
                 }
             }
             if (getQuantifier().isAbsolute()) {
-                return 1 - sum / getObjects1().size();
+                t7 = 1 - sum / getObjects1().size();
             } else {
-                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
+                t7 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
             }
         } else {
             List<Double> getMinS = new ArrayList<>();
@@ -320,24 +332,28 @@ public class Measures {
                 }
             }
             if (getQuantifier().isAbsolute()) {
-                return 1 - sum / getObjects1().size();
+                t7 = 1 - sum / getObjects1().size();
             } else {
-                return 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
+                t7 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
             }
         }
+        return (double) Math.round(t7 * 100) / 100;
     }
 
     public double calcT8() {
         double p = 1.0;
         double card = 0.0;
+        double t8 =0.0;
         for (Label label : getSummarizers()) {
             card = label.getFuzzySet().getMembershipFunction().getCardinalNumber();
             p *= card / label.getFuzzySet().getUniverse().universe();
         }
-        return 1 - Math.pow(p, (double) 1 / getSummarizers().size());
+        t8 = 1 - Math.pow(p, (double) 1 / getSummarizers().size());
+        return (double) Math.round(t8 * 100) / 100;
     }
 
     public double calcT9() {
+        double t9 =0.0;
         if (getQualifiers() != null) {
             double p = 1.0;
             List<Double> values = new ArrayList<>();
@@ -348,13 +364,15 @@ public class Measures {
                 p *= label.getFuzzySet().degreeOfFuzziness(values);
                 values.removeAll(values);
             }
-            return 1 - Math.pow(p, 1.0 / getSummarizers().size());
+            t9 = 1 - Math.pow(p, 1.0 / getSummarizers().size());
         } else {
-            return 0.0;
+            t9 = 0.0;
         }
+        return (double) Math.round(t9 * 100) / 100;
     }
 
     public double calcT10() {
+        double t10 = 0.0;
         if (getQualifiers() != null) {
             double p = 1.0;
             double card = 0.0;
@@ -362,18 +380,21 @@ public class Measures {
                 card = label.getFuzzySet().getMembershipFunction().getCardinalNumber();
                 p *= card / label.getFuzzySet().getUniverse().universe();
             }
-            return 1 - Math.pow(p, (double) 1 / getSummarizers().size());
+            t10 = 1 - Math.pow(p, (double) 1 / getSummarizers().size());
         } else {
-            return 0.0;
+            t10 = 0.0;
         }
+        return (double) Math.round(t10 * 100) / 100;
     }
 
     public double calcT11() {
+        double t11 = 0.0;
         if (getQualifiers() != null) {
-            return 2 * Math.pow(0.5, getQualifiers().size());
+            t11 = 2 * Math.pow(0.5, getQualifiers().size());
         } else {
-            return 0.0;
+            t11 = 0.0;
         }
+        return (double) Math.round(t11 * 100) / 100;
     }
 
     public double calcQuality() {
@@ -401,14 +422,22 @@ public class Measures {
                 sum += weights.get(i);
             }
         }
-        return q / sum;
+        double t = q / sum;
+        return (double) Math.round(t * 100) / 100;
     }
 
     @Override
     public String toString() {
-        return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
-                T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
-                T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality + ", " + T9degreeOfQualifierImprecision +
-                ", " + T10degreeOfQualifierCardinality + ", " + T11lengthOfQualifier + ", " + qualityOfSummary;
+        if (qualifiers != null) {
+            return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
+                    T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
+                    T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality + ", " + T9degreeOfQualifierImprecision +
+                    ", " + T10degreeOfQualifierCardinality + ", " + T11lengthOfQualifier + ", " + qualityOfSummary;
+        } else {
+            return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
+                    T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
+                    T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality +
+                    ", " + qualityOfSummary;
+        }
     }
 }

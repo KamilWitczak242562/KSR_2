@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,7 +30,7 @@ public class ClassicSet {
     }
 
     public double universe() {
-        return set.getLast() - set.getFirst();
+        return set.get(set.size()-1) - set.get(0);
     }
 
 }

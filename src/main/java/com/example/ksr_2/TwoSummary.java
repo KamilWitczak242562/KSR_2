@@ -18,7 +18,7 @@ public class TwoSummary {
 
     @Override
     public String toString() {
-        return summary + "[" + quality + "]";
+        return summary + "[" + (double) Math.round(quality * 100) / 100 + "]";
     }
 
     public void saveToCsv() {

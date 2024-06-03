@@ -130,6 +130,7 @@ public class HelloController implements Initializable {
 
     private List<Summary> summaries;
     private List<SummaryTwo> summariesTwo;
+    private List<SummaryTwoSecond> summariesTwoSecond;
 
     private List<Quantifier> quantifiersNew;
     private List<Label> summariesNew;
@@ -165,7 +166,7 @@ public class HelloController implements Initializable {
     private void drawMembershipFunctionChart(LineChart<Number, Number> chart, MembershipFunction function, List<Double> universe) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         List<Double> newUniverse = new ArrayList<>();
-        for (double i = universe.getFirst(); i < universe.getLast(); i++) {
+        for (double i = universe.get(0); i < universe.get(universe.size()-1); i++) {
             newUniverse.add(i);
         }
         for (double x : newUniverse) {
@@ -489,28 +490,35 @@ public class HelloController implements Initializable {
         ws.addAll(checkedNewWs);
 
         summariesTwo = new ArrayList<>();
+        summariesTwoSecond = new ArrayList<>();
         for (CheckedItem checkedItem : checkedItemsQ) {
             if (checkedItem.getCategory().equals("Absolutne")) {
                 Quantifier quantifier = LabelFactory.createQuantifier(checkedItem.getItem().toLowerCase(), true);
                 if (ws.isEmpty()) {
                     summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+                    summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ss, split.get(1), split.get(0)));
                 } else {
                     summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+                    summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ws, ss, split.get(1), split.get(0)));
                 }
             } else {
                 Quantifier quantifier = LabelFactory.createQuantifier(checkedItem.getItem().toLowerCase(), false);
                 if (ws.isEmpty()) {
                     summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+                    summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ss, split.get(1), split.get(0)));
                 } else {
                     summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+                    summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ws, ss, split.get(1), split.get(0)));
                 }
             }
         }
         for (Quantifier quantifier: checkedNewQs) {
             if (ws.isEmpty()) {
                 summariesTwo.add(new SummaryTwo(quantifier, ss, split.get(0), split.get(1)));
+                summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ss, split.get(1), split.get(0)));
             } else {
                 summariesTwo.add(new SummaryTwo(quantifier, ws, ss, split.get(0), split.get(1)));
+                summariesTwoSecond.add(new SummaryTwoSecond(quantifier, ws, ss, split.get(1), split.get(0)));
             }
         }
         generateResultsTwo();
@@ -520,13 +528,11 @@ public class HelloController implements Initializable {
         List<TwoSummary> twoSummaries = new ArrayList<>();
         for (SummaryTwo summaryTwo : summariesTwo) {
             List<TwoSummary> generatedSummaries = summaryTwo.generateAllDualSummaries();
-            Iterator<TwoSummary> iterator = generatedSummaries.iterator();
-            while (iterator.hasNext()) {
-                TwoSummary twoSummary = iterator.next();
-                if (twoSummary.getQuality() == 0.0 || Double.isNaN(twoSummary.getQuality())) {
-                    iterator.remove();
-                }
-            }
+            twoSummaries.addAll(generatedSummaries);
+        }
+
+        for (SummaryTwoSecond summaryTwoSecond : summariesTwoSecond) {
+            List<TwoSummary> generatedSummaries = summaryTwoSecond.generateAllDualSummaries();
             twoSummaries.addAll(generatedSummaries);
         }
 
@@ -684,13 +690,6 @@ public class HelloController implements Initializable {
         List<OneSummary> oneSummaries = new ArrayList<>();
         for (Summary summary : summaries) {
             List<OneSummary> generatedSummaries = summary.generateAllOneSummaries();
-            Iterator<OneSummary> iterator = generatedSummaries.iterator();
-            while (iterator.hasNext()) {
-                OneSummary oneSummary = iterator.next();
-                if (oneSummary.getQuality() == 0.0) {
-                    iterator.remove();
-                }
-            }
             oneSummaries.addAll(generatedSummaries);
         }
 
