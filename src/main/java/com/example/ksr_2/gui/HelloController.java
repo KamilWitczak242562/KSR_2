@@ -78,12 +78,6 @@ public class HelloController implements Initializable {
     private TextField nameQ;
 
     @FXML
-    private TextField startQ;
-
-    @FXML
-    private TextField endQ;
-
-    @FXML
     private TextField bQ;
 
     @FXML
@@ -125,6 +119,9 @@ public class HelloController implements Initializable {
     @FXML
     private LineChart chartQ;
 
+    @FXML
+    private MenuItem carbohydrates, cholesterol, energy, fiber, protein, sugar, fat, magnesium, vitaminC, vitaminB6;
+
     private ObservableList<String> summariesList;
     private ObservableList<String> summariesTwoList;
 
@@ -144,11 +141,37 @@ public class HelloController implements Initializable {
     private boolean trapS;
     private boolean trianS;
 
+    private String selectedLingVariable;
+    private List<Double> selectedUniverse;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeTreeViewQ();
         initializeTreeViewW();
         initializeTreeViewS();
+        carbohydrates.setOnAction(event -> updateLingVariable("carbohydrates", generateUniverse(0, 300)));
+        cholesterol.setOnAction(event -> updateLingVariable("cholesterol", generateUniverse(0, 350)));
+        energy.setOnAction(event -> updateLingVariable("energy", generateUniverse(0, 1300)));
+        fiber.setOnAction(event -> updateLingVariable("fiber", generateUniverse(0, 100)));
+        protein.setOnAction(event -> updateLingVariable("protein", generateUniverse(0, 100)));
+        sugar.setOnAction(event -> updateLingVariable("sugar", generateUniverse(0, 100)));
+        fat.setOnAction(event -> updateLingVariable("fat", generateUniverse(0, 100)));
+        magnesium.setOnAction(event -> updateLingVariable("magnesium", generateUniverse(0, 2300)));
+        vitaminC.setOnAction(event -> updateLingVariable("vitamin C", generateUniverse(0, 4500)));
+        vitaminB6.setOnAction(event -> updateLingVariable("vitamin B6", generateUniverse(0, 10)));
+    }
+
+    private void updateLingVariable(String variable, List<Double> universe) {
+        selectedLingVariable = variable;
+        selectedUniverse = universe;
+    }
+
+    private List<Double> generateUniverse(double start, double end) {
+        List<Double> universe = new ArrayList<>();
+        for (double i = start; i <= end; i += 0.1) {
+            universe.add(i);
+        }
+        return universe;
     }
 
     @FXML
@@ -180,13 +203,9 @@ public class HelloController implements Initializable {
     public void createS() {
         MembershipFunction membershipFunction = null;
         summariesNew = new ArrayList<>();
-        List<Double> universe = new ArrayList<>(){{
-            for (double i = Double.parseDouble(startS.getText()); i <= Double.parseDouble(endS.getText()); i += 0.01) {
-                add(i);
-            }
-        }};
+
         Label summarizer;
-        ClassicSet classicSet = new ClassicSet(universe);
+        ClassicSet classicSet = new ClassicSet(selectedUniverse);
         FuzzySet fuzzySet;
         if (gaussS) {
             membershipFunction = new Gaussian(Double.parseDouble(bS.getText()), Double.parseDouble(aS.getText()));
@@ -199,7 +218,7 @@ public class HelloController implements Initializable {
             membershipFunction = new Triangular(Double.parseDouble(aS.getText()), Double.parseDouble(bS.getText()), Double.parseDouble(cS.getText()));
         }
         fuzzySet= new FuzzySet(membershipFunction, classicSet);
-        summarizer = new Label(fuzzySet, nameS.getText(), nameSLing.getText());
+        summarizer = new Label(fuzzySet, nameS.getText(), selectedLingVariable);
         summariesNew.add(summarizer);
 
         TreeItem<String> newSItem = createCheckBoxTreeItem(nameS.getText());
@@ -212,7 +231,7 @@ public class HelloController implements Initializable {
             absoluteNodeW.getChildren().add(newSItem);
         }
 
-        drawMembershipFunctionChart(chartS, membershipFunction, universe);
+        drawMembershipFunctionChart(chartS, membershipFunction, selectedUniverse);
     }
 
     @FXML
@@ -261,11 +280,20 @@ public class HelloController implements Initializable {
     public void createQ() {
         MembershipFunction membershipFunction = null;
         quantifiersNew = new ArrayList<>();
-        List<Double> universe = new ArrayList<>(){{
-            for (double i = Double.parseDouble(startQ.getText()); i <= Double.parseDouble(endQ.getText()); i += 0.01) {
-                add(i);
-            }
-        }};
+        List<Double> universe;
+        if  (isAbs) {
+            universe = new ArrayList<>(){{
+                for (double i = 0; i <= 15261; i += 1) {
+                    add(i);
+                }
+            }};
+        } else {
+            universe = new ArrayList<>(){{
+                for (double i = 0; i <= 1; i += 0.01) {
+                    add(i);
+                }
+            }};
+        }
         Quantifier quantifier;
         ClassicSet classicSet = new ClassicSet(universe);
         FuzzySet fuzzySet;
@@ -453,6 +481,8 @@ public class HelloController implements Initializable {
                 }
             }
         }
+
+        System.out.println(checkedNewSs);
 
         List<FoodEntry> foodEntries = loadFoodEntries();
         List<List<FoodEntry>> split = splitFoodEntry(foodEntries);

@@ -258,6 +258,8 @@ public class SummaryTwo {
                 minS2.add(Collections.min(min));
                 min.removeAll(min);
             }
+
+
             quality = 1 - calculateInclusionLukasiewicz(minS2, minS1);
             sentences.add(new TwoSummary(sentence.toString(), quality));
         }

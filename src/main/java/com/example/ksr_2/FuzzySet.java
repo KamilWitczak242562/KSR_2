@@ -20,7 +20,7 @@ public class FuzzySet{
     public List<Double> getSupport(List<Double> values) {
         List<Double> support = new ArrayList<>();
         for (double element : values) {
-            if (membershipFunction.getMembership(element) > 0) {
+            if (membershipFunction.getMembership(element) > 0.0) {
                 support.add(element);
             }
         }
@@ -32,12 +32,7 @@ public class FuzzySet{
     }
 
     public double degreeOfFuzziness(List<Double> values) {
-        double cardinalNumber = getCardinalNumber(values);
-        double classicalCardinalNumber = getSupport(values).size();
-        if (classicalCardinalNumber == 0) {
-            return 0.0;
-        }
-        return cardinalNumber / classicalCardinalNumber;
+        return (double) getSupport(values).size() / values.size();
     }
 
     public double getCardinalNumber(List<Double> values) {
