@@ -59,47 +59,42 @@ public class Measures {
     private double calcT1() {
         double t1 = 0.0;
         List<Double> minValues = new ArrayList<>();
-        double sum = 0;
 
+        List<Double> supp = new ArrayList<>();
+        List<Double> supp2 = new ArrayList<>();
         for (FoodEntry foodEntry : objects1) {
             minValues.clear();
             for (Label label : summarizers) {
                 minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
             }
-            sum += Collections.min(minValues);
+            if (Collections.min(minValues) > 0.0) {
+                supp.add(Collections.min(minValues));
+            }
         }
 
         if (qualifiers == null) {
-            t1 = quantifier.isAbsolute() ? quantifier.getMembership(sum) : quantifier.getMembership(sum / objects1.size());
+            t1 = quantifier.isAbsolute() ? quantifier.getMembership(supp.size()) : quantifier.getMembership((double) supp.size() / objects1.size());
         } else {
-            double sumForW = calculateSumForQualifiers(minValues, sum);
-            t1 = quantifier.getMembership(sum / sumForW);
+            for (FoodEntry foodEntry : objects1) {
+                minValues.clear();
+                for (Label label : qualifiers) {
+                    minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
+                }
+                if (Collections.min(minValues) > 0.0) {
+                    supp2.add(Collections.min(minValues));
+                }
+            }
+
+            List<Double> suppWS = new ArrayList<>();
+
+            for (int i = 0; i < supp.size(); i++) {
+                suppWS.add(Math.min(supp.get(i), supp2.get(i)));
+            }
+
+            t1 = quantifier.getMembership((double) suppWS.size() / supp2.size());
         }
 
         return roundToTwoDecimalPlaces(t1);
-    }
-
-    private double calculateSumForQualifiers(List<Double> minValues, double sum) {
-        List<Double> valuesForWMinS = new ArrayList<>();
-        double sumForW = 0;
-
-        for (FoodEntry foodEntry : objects1) {
-            minValues.clear();
-            for (Label label : qualifiers) {
-                minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-            }
-            double minQ = Collections.min(minValues);
-
-            if (sum < minQ) {
-                valuesForWMinS.add(sum);
-            } else {
-                valuesForWMinS.add(minQ);
-            }
-            sumForW += minQ;
-        }
-
-        double sumWandS = valuesForWMinS.stream().mapToDouble(Double::doubleValue).sum() / objects1.size();
-        return sumWandS / (sumForW / objects1.size());
     }
 
     private double calcT2() {
