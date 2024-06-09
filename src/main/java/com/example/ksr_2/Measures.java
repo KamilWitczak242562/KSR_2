@@ -38,11 +38,7 @@ public class Measures {
     }
 
     public Measures(List<Double> weights, Quantifier quantifier, List<Label> summarizers, List<FoodEntry> objects1) {
-        this.weights = weights;
-        this.quantifier = quantifier;
-        this.summarizers = summarizers;
-        this.objects1 = objects1;
-        calculateMeasures();
+        this(weights, quantifier, null, summarizers, objects1);
     }
 
     public void calculateMeasures() {
@@ -60,402 +56,217 @@ public class Measures {
         this.qualityOfSummary = calcQuality();
     }
 
-    public double calcT1() {
+    private double calcT1() {
         double t1 = 0.0;
-        if (getQualifiers() == null) {
-            List<Double> getMin = new ArrayList<>();
-            double sum = 0;
-            if (getQuantifier().isAbsolute()) {
-                for (FoodEntry foodEntry : getObjects1()) {
-                    for (Label label : getSummarizers()) {
-                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                    }
-                    sum += Collections.min(getMin);
-                    getMin.removeAll(getMin);
-                }
-                return getQuantifier().getMembership(sum);
-            } else {
-                for (FoodEntry foodEntry : getObjects1()) {
-                    for (Label label : getSummarizers()) {
-                        getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                    }
-                    sum += Collections.min(getMin);
-                    getMin.removeAll(getMin);
-                }
-                t1 = getQuantifier().getMembership(sum / getObjects1().size());
+        List<Double> minValues = new ArrayList<>();
+        double sum = 0;
+
+        for (FoodEntry foodEntry : objects1) {
+            minValues.clear();
+            for (Label label : summarizers) {
+                minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
             }
-        } else {
-            List<Double> getMin = new ArrayList<>();
-            List<Double> getMinQ = new ArrayList<>();
-            List<Double> valuesForWMinS = new ArrayList<>();
-            double sumForS;
-            double sumForW;
-            for (FoodEntry foodEntry : getObjects1()) {
-                sumForS = 0;
-                sumForW = 0;
-                for (Label label : getSummarizers()) {
-                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                sumForS += Collections.min(getMin);
-                for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                sumForW += Collections.min(getMin);
-                if (sumForS < sumForW) {
-                    valuesForWMinS.add(sumForS);
-                } else {
-                    valuesForWMinS.add(sumForW);
-                }
-                getMin.removeAll(getMin);
-                getMinQ.removeAll(getMinQ);
-            }
-            sumForW = 0;
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getQualifiers()) {
-                    getMin.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                sumForW += Collections.min(getMin);
-                getMin.removeAll(getMin);
-            }
-            double sumWandS = 0;
-            for (double value : valuesForWMinS) {
-                sumWandS += value;
-            }
-            sumWandS = sumWandS / getObjects1().size();
-            sumForW = sumForW / getObjects1().size();
-            t1 = getQuantifier().getMembership(sumWandS / sumForW);
+            sum += Collections.min(minValues);
         }
-        return (double) Math.round(t1 * 100) / 100;
+
+        if (qualifiers == null) {
+            t1 = quantifier.isAbsolute() ? quantifier.getMembership(sum) : quantifier.getMembership(sum / objects1.size());
+        } else {
+            double sumForW = calculateSumForQualifiers(minValues, sum);
+            t1 = quantifier.getMembership(sum / sumForW);
+        }
+
+        return roundToTwoDecimalPlaces(t1);
     }
 
-    public double calcT2() {
+    private double calculateSumForQualifiers(List<Double> minValues, double sum) {
+        List<Double> valuesForWMinS = new ArrayList<>();
+        double sumForW = 0;
+
+        for (FoodEntry foodEntry : objects1) {
+            minValues.clear();
+            for (Label label : qualifiers) {
+                minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
+            }
+            double minQ = Collections.min(minValues);
+
+            if (sum < minQ) {
+                valuesForWMinS.add(sum);
+            } else {
+                valuesForWMinS.add(minQ);
+            }
+            sumForW += minQ;
+        }
+
+        double sumWandS = valuesForWMinS.stream().mapToDouble(Double::doubleValue).sum() / objects1.size();
+        return sumWandS / (sumForW / objects1.size());
+    }
+
+    private double calcT2() {
         double p = 1.0;
-        double t2 = 0.0;
         List<Double> values = new ArrayList<>();
-        for (Label label : getSummarizers()) {
-            for (FoodEntry foodEntry : getObjects1()) {
+
+        for (Label label : summarizers) {
+            values.clear();
+            for (FoodEntry foodEntry : objects1) {
                 values.add(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
             }
             p *= label.getFuzzySet().degreeOfFuzziness(values);
-            values.removeAll(values);
         }
-        t2 = 1 - Math.pow(p, 1.0 / getSummarizers().size());
-        return (double) Math.round(t2 * 100) / 100;
+
+        return roundToTwoDecimalPlaces(1 - Math.pow(p, 1.0 / summarizers.size()));
     }
 
-    public double calcT3() {
+    private double calcT3() {
         int t = 0;
         int h = 0;
-        double membershipQ = 0.0;
-        double membershipS = 0.0;
-        double membershipSandQ = 0.0;
-        double t3 = 0.0;
-        List<Double> listQ = new ArrayList<>();
-        List<Double> listS = new ArrayList<>();
-        if (getQualifiers() != null) {
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getQualifiers()) {
-                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                membershipQ = Collections.min(listQ);
-                listQ.removeAll(listQ);
-                if (membershipQ > 0.0) {
-                    h++;
-                }
+        List<Double> minValues = new ArrayList<>();
 
-                for (Label label : getSummarizers()) {
-                    listS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                membershipS = Collections.min(listS);
-                listQ.removeAll(listS);
-                membershipSandQ = Math.min(membershipS, membershipQ);
-                if (membershipSandQ > 0.0) {
-                    t++;
-                }
+        if (qualifiers != null) {
+            for (FoodEntry foodEntry : objects1) {
+                double membershipQ = getMinMembership(minValues, foodEntry, qualifiers);
+                if (membershipQ > 0.0) h++;
+
+                double membershipS = getMinMembership(minValues, foodEntry, summarizers);
+                if (Math.min(membershipS, membershipQ) > 0.0) t++;
             }
-            if (h == 0 || t == 0) {
-                t3 = 0.0;
-            } else {
-                t3 = (double) t / h;
-            }
+            return roundToTwoDecimalPlaces(h == 0 || t == 0 ? 0.0 : (double) t / h);
         } else {
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getSummarizers()) {
-                    listQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                membershipQ = Collections.min(listQ);
-                listQ.removeAll(listQ);
-                if (membershipQ > 0.0) {
-                    t++;
-                }
+            for (FoodEntry foodEntry : objects1) {
+                if (getMinMembership(minValues, foodEntry, summarizers) > 0.0) t++;
             }
-            t3 = (double) t / getObjects1().size();
+            return roundToTwoDecimalPlaces((double) t / objects1.size());
         }
-        return (double) Math.round(t3 * 100) / 100;
     }
 
-    public double calcT4() {
+    private double getMinMembership(List<Double> minValues, FoodEntry foodEntry, List<Label> labels) {
+        minValues.clear();
+        for (Label label : labels) {
+            minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
+        }
+        return Collections.min(minValues);
+    }
+
+    private double calcT4() {
         double p = 1.0;
-        double t4 = 0.0;
-        for (Label label : getSummarizers()) {
+        for (Label label : summarizers) {
             double r = 0.0;
-            for (FoodEntry foodEntry : getObjects1()) {
+            for (FoodEntry foodEntry : objects1) {
                 r += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
             }
-            p *= r / getObjects1().size();
+            p *= r / objects1.size();
         }
-        t4 = Math.abs(p - this.T3degreeOfCovering);
-        return (double) Math.round(t4 * 100) / 100;
+        return roundToTwoDecimalPlaces(Math.abs(p - T3degreeOfCovering));
     }
 
-    public double calcT5() {
-        double t5 = 2 * Math.pow(0.5, getSummarizers().size());
-        return (double) Math.round(t5 * 100) / 100;
+    private double calcT5() {
+        return roundToTwoDecimalPlaces(2 * Math.pow(0.5, summarizers.size()));
     }
 
-    public double calcT6() {
-        double t6 = 0.0;
-        if (getQualifiers() != null) {
-            List<Double> getMinQ = new ArrayList<>();
-            List<Double> getMinS = new ArrayList<>();
-            List<Double> bigQ = new ArrayList<>();
-            List<Double> bigS = new ArrayList<>();
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                bigS.add(Collections.min(getMinS));
-                bigQ.add(Collections.min(getMinQ));
-                getMinQ.removeAll(getMinQ);
-                getMinS.removeAll(getMinS);
-            }
-            List<Double> output = new ArrayList<>();
-            for (int i = 0; i < bigS.size(); i++) {
-                output.add(Math.min(bigS.get(i), bigQ.get(i)));
-            }
-            List<Double> suppQ = new ArrayList<>();
-            for (double value : output) {
-                if (getQuantifier().getMembership(value) > 0.0) {
-                    suppQ.add(value);
-                }
-            }
-            if (getQuantifier().isAbsolute()) {
-                t6 = 1 - (double) suppQ.size() / getObjects1().size();
-            } else {
-                t6 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
-            }
-        } else {
-            List<Double> getMinS = new ArrayList<>();
-            List<Double> bigS = new ArrayList<>();
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                bigS.add(Collections.min(getMinS));
-                getMinS.removeAll(getMinS);
-            }
-            List<Double> suppQ = new ArrayList<>();
-            for (double value : bigS) {
-                if (getQuantifier().getMembership(value) > 0.0) {
-                    suppQ.add(value);
-                }
-            }
-            if (getQuantifier().isAbsolute()) {
-                t6 = 1 - (double) suppQ.size() / getObjects1().size();
-            } else {
-                t6 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getSupport();
-            }
-        }
-        return (double) Math.round(t6 * 100) / 100;
+    private double calcT6() {
+        double support = quantifier.getFuzzySet().getMembershipFunction().getSupport();
+        double t6 = quantifier.isAbsolute() ? 1 - support / objects1.size() : 1 - support;
+        return roundToTwoDecimalPlaces(t6);
     }
 
-    /**
-     * ASK
-     *
-     * @return
-     */
-    public double calcT7() {
-        double t7 = 0.0;
-        if (getQualifiers() != null) {
-            List<Double> getMinQ = new ArrayList<>();
-            List<Double> getMinS = new ArrayList<>();
-            List<Double> bigQ = new ArrayList<>();
-            List<Double> bigS = new ArrayList<>();
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getQualifiers()) {
-                    getMinQ.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                bigS.add(Collections.min(getMinS));
-                bigQ.add(Collections.min(getMinQ));
-                getMinQ.removeAll(getMinQ);
-                getMinS.removeAll(getMinS);
-            }
-            List<Double> output = new ArrayList<>();
-            for (int i = 0; i < bigS.size(); i++) {
-                output.add(Math.min(bigQ.get(i), bigS.get(i)));
-            }
-            double sum = 0.0;
-            for (double value : output) {
-                if (getQuantifier().getMembership(value) > 0.0) {
-                    sum += getQuantifier().getMembership(value);
-                }
-            }
-            if (getQuantifier().isAbsolute()) {
-                t7 = 1 - sum / getObjects1().size();
-            } else {
-                t7 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
-            }
-        } else {
-            List<Double> getMinS = new ArrayList<>();
-            List<Double> bigS = new ArrayList<>();
-            for (FoodEntry foodEntry : getObjects1()) {
-                for (Label label : getSummarizers()) {
-                    getMinS.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                bigS.add(Collections.min(getMinS));
-                getMinS.removeAll(getMinS);
-            }
-            double sum = 0.0;
-            for (double value : bigS) {
-                if (getQuantifier().getMembership(value) > 0.0) {
-                    sum += getQuantifier().getMembership(value);
-                }
-            }
-            if (getQuantifier().isAbsolute()) {
-                t7 = 1 - sum / getObjects1().size();
-            } else {
-                t7 = 1 - getQuantifier().getFuzzySet().getMembershipFunction().getCardinalNumber();
-            }
-        }
-        return (double) Math.round(t7 * 100) / 100;
+    private double calcT7() {
+        double cardinalNumber = quantifier.getFuzzySet().getMembershipFunction().getCardinalNumber();
+        double t7 = quantifier.isAbsolute() ? 1 - cardinalNumber / objects1.size() : 1 - cardinalNumber;
+        return roundToTwoDecimalPlaces(t7);
     }
 
-    public double calcT8() {
+    private double calcT8() {
         double p = 1.0;
-        double t8 = 0.0;
-
-        for (Label label: getSummarizers()) {
+        for (Label label : summarizers) {
             double card = 0.0;
-            for (FoodEntry foodEntry: objects1) {
+            for (FoodEntry foodEntry : objects1) {
+                card += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
+            }
+            p *= card / objects1.size();
+        }
+        return roundToTwoDecimalPlaces(1 - Math.pow(p, 1.0 / summarizers.size()));
+    }
+
+    private double calcT9() {
+        if (qualifiers == null) return 1.0;
+
+        double p = 1.0;
+        List<Double> values = new ArrayList<>();
+        for (Label label : qualifiers) {
+            values.clear();
+            for (FoodEntry foodEntry : objects1) {
+                values.add(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
+            }
+            p *= label.getFuzzySet().degreeOfFuzziness(values);
+        }
+
+        return roundToTwoDecimalPlaces(1 - Math.pow(p, 1.0 / qualifiers.size()));
+    }
+
+    private double calcT10() {
+        if (qualifiers == null) return 1.0;
+
+        double p = 1.0;
+        for (Label label : qualifiers) {
+            double card = 0.0;
+            for (FoodEntry foodEntry : objects1) {
                 card += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
             }
             p *= card / objects1.size();
         }
 
-        t8 = 1 - Math.pow(p, (double) 1 / getSummarizers().size());
-        return (double) Math.round(t8 * 100) / 100;
+        return roundToTwoDecimalPlaces(1 - Math.pow(p, 1.0 / qualifiers.size()));
     }
 
-    public double calcT9() {
-        double t9 =0.0;
-        if (getQualifiers() != null) {
-            System.out.println("there are Q " + getQualifiers());
-            double p = 1.0;
-            List<Double> values = new ArrayList<>();
-            for (Label label : getQualifiers()) {
-                for (FoodEntry foodEntry : getObjects1()) {
-                    values.add(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase()));
-                }
-                p *= label.getFuzzySet().degreeOfFuzziness(values);
-                values.removeAll(values);
-            }
-            t9 = 1 - Math.pow(p, 1.0 / getQualifiers().size());
-        } else {
-            t9 = 1.0;
-        }
-        return (double) Math.round(t9 * 100) / 100;
+    private double calcT11() {
+        return roundToTwoDecimalPlaces(qualifiers == null ? 1.0 : 2 * Math.pow(0.5, qualifiers.size()));
     }
 
-    public double calcT10() {
-        double t10 = 0.0;
-        double p = 1.0;
-        if (getQualifiers() != null) {
-            System.out.println("there are Q " + getQualifiers());
-            for (Label label : getQualifiers()) {
-                double card = 0.0;
-                for (FoodEntry foodEntry: objects1) {
-                    card += label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable()));
-                }
-                p *= card / objects1.size();
-            }
-            t10 = 1 - Math.pow(p, (double) 1 / getQualifiers().size());
-        } else {
-            t10 = 1.0;
-        }
-        return (double) Math.round(t10 * 100) / 100;
-    }
-
-    public double calcT11() {
-        double t11 = 0.0;
-        if (getQualifiers() != null) {
-            System.out.println("there are Q " + getQualifiers());
-            t11 = 2 * Math.pow(0.5, getQualifiers().size());
-        } else {
-            t11 = 1.0;
-        }
-        return (double) Math.round(t11 * 100) / 100;
-    }
-
-    public double calcQuality() {
+    private double calcQuality() {
         double q = 0.0;
         double sum = 0.0;
-        if (getQualifiers() == null) {
-            System.out.println("there are Q " + getQualifiers());
-            List<Double> measures = new ArrayList<>() {{
-                add(T1degreeOfTruth);
-                add(T2degreeOfImprecision);
-                add(T3degreeOfCovering);
-                add(T4degreeOfAppropriateness);
-                add(T5lengthOfSummary);
-                add(T6degreeOfQuantifierImprecision);
-                add(T7degreeOfQuantifierCardinality);
-                add(T8degreeOfSummarizerCardinality);
-            }};
-            for (int i = 0; i < measures.size(); i++) {
-                q += weights.get(i) * measures.get(i);
-                sum += weights.get(i);
-            }
-        } else {
-            List<Double> measures = new ArrayList<>() {{
-                add(T1degreeOfTruth);
-                add(T2degreeOfImprecision);
-                add(T3degreeOfCovering);
-                add(T4degreeOfAppropriateness);
-                add(T5lengthOfSummary);
-                add(T6degreeOfQuantifierImprecision);
-                add(T7degreeOfQuantifierCardinality);
-                add(T8degreeOfSummarizerCardinality);
-                add(T9degreeOfQualifierImprecision);
-                add(T10degreeOfQualifierCardinality);
-                add(T11lengthOfQualifier);
-            }};
-            for (int i = 0; i < measures.size(); i++) {
-                q += weights.get(i) * measures.get(i);
-                sum += weights.get(i);
-            }
+
+        List<Double> measures = new ArrayList<>();
+        measures.add(T1degreeOfTruth);
+        measures.add(T2degreeOfImprecision);
+        measures.add(T3degreeOfCovering);
+        measures.add(T4degreeOfAppropriateness);
+        measures.add(T5lengthOfSummary);
+        measures.add(T6degreeOfQuantifierImprecision);
+        measures.add(T7degreeOfQuantifierCardinality);
+        measures.add(T8degreeOfSummarizerCardinality);
+
+        if (qualifiers != null) {
+            measures.add(T9degreeOfQualifierImprecision);
+            measures.add(T10degreeOfQualifierCardinality);
+            measures.add(T11lengthOfQualifier);
         }
-        double t = q / sum;
-        return (double) Math.round(t * 100) / 100;
+
+        for (int i = 0; i < measures.size(); i++) {
+            q += weights.get(i) * measures.get(i);
+            sum += weights.get(i);
+        }
+
+        return roundToTwoDecimalPlaces(q / sum);
+    }
+
+    private double roundToTwoDecimalPlaces(double value) {
+        return (double) Math.round(value * 100) / 100;
     }
 
     @Override
     public String toString() {
         if (qualifiers != null) {
-            return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
-                    T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
-                    T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality + ", " + T9degreeOfQualifierImprecision +
-                    ", " + T10degreeOfQualifierCardinality + ", " + T11lengthOfQualifier + ", " + qualityOfSummary;
+            return String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+                    T1degreeOfTruth, T2degreeOfImprecision, T3degreeOfCovering, T4degreeOfAppropriateness,
+                    T5lengthOfSummary, T6degreeOfQuantifierImprecision, T7degreeOfQuantifierCardinality,
+                    T8degreeOfSummarizerCardinality, T9degreeOfQualifierImprecision,
+                    T10degreeOfQualifierCardinality, T11lengthOfQualifier, qualityOfSummary);
         } else {
-            return T1degreeOfTruth + ", " + T2degreeOfImprecision + ", " + T3degreeOfCovering + ", " +
-                    T4degreeOfAppropriateness + ", " + T5lengthOfSummary + ", " + T6degreeOfQuantifierImprecision + ", " +
-                    T7degreeOfQuantifierCardinality + ", " + T8degreeOfSummarizerCardinality +
-                    ", " + qualityOfSummary;
+            return String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s",
+                    T1degreeOfTruth, T2degreeOfImprecision, T3degreeOfCovering, T4degreeOfAppropriateness,
+                    T5lengthOfSummary, T6degreeOfQuantifierImprecision, T7degreeOfQuantifierCardinality,
+                    T8degreeOfSummarizerCardinality, qualityOfSummary);
         }
     }
 }

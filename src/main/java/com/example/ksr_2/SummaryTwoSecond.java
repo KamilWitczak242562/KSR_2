@@ -28,255 +28,167 @@ public class SummaryTwoSecond {
     }
 
     public SummaryTwoSecond(Quantifier quantifier, List<Label> summarizers, List<FoodEntry> objects1, List<FoodEntry> objects2) {
-        this.quantifier = quantifier;
-        this.summarizers = summarizers;
-        this.objects1 = objects1;
-        this.objects2 = objects2;
+        this(quantifier, null, summarizers, objects1, objects2);
     }
 
     public List<TwoSummary> generateAllDualSummaries() {
         List<TwoSummary> allDualSummaries = new ArrayList<>();
 
         if (qualifiers != null) {
-            allDualSummaries.addAll(generateSecondForm(this.qualifiers, this.summarizers));
-            allDualSummaries.addAll(generateThirdForm(this.qualifiers, this.summarizers));
+            allDualSummaries.addAll(generateThirdForm());
+            allDualSummaries.addAll(generateSecondForm());
         } else {
-            allDualSummaries.addAll(generateFirstForm(this.summarizers));
-            allDualSummaries.addAll(generateForthForm(this.summarizers));
+            allDualSummaries.addAll(generateFirstForm());
+            allDualSummaries.addAll(generateFourthForm());
         }
+
         return allDualSummaries;
     }
 
-    public List<TwoSummary> generateThirdForm(List<Label> qualifiers, List<Label> summarizers) {
-        List<List<Label>> qualifierCombinations = getAllCombinations(qualifiers);
+    private List<TwoSummary> generateForm(List<Label> summarizers, boolean isFirstForm, boolean isThirdForm) {
         List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
         List<TwoSummary> twoSummaries = new ArrayList<>();
-        for (List<Label> qualifierCombination : qualifierCombinations) {
-            for (List<Label> summarizerCombination : summarizerCombinations) {
-                double quality = 0.0;
-                StringBuilder sentence = new StringBuilder();
-                sentence.append(quantifier.toString());
-                if (qualifierCombination.isEmpty()) {
-                    sentence.append(" meat products compared to meat free products are/have ");
-                } else {
-                    sentence.append(" meat products that are/have ");
-                    for (int i = 0; i < qualifierCombination.size(); i++) {
-                        if (i > 0) {
-                            sentence.append(" and ");
-                        }
-                        sentence.append(qualifierCombination.get(i).toString());
-                    }
-                    sentence.append(" compared to meat free products are/have ");
-                }
-                for (int i = 0; i < summarizerCombination.size(); i++) {
-                    if (i > 0) {
-                        sentence.append(" and ");
-                    }
-                    sentence.append(summarizerCombination.get(i).toString());
-                }
 
-                double sumTwo = 0.0;
-
-                List<Double> min = new ArrayList<>();
-                List<Double> minS1 = new ArrayList<>();
-                List<Double> minW = new ArrayList<>();
-                double sumWS = 0.0;
-                for (FoodEntry foodEntry : objects2) {
-                    for (Label label : summarizerCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    sumTwo += Collections.min(min);
-                    min.removeAll(min);
-                }
-
-                for (FoodEntry foodEntry : objects1) {
-                    for (Label label : summarizerCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    minS1.add(Collections.min(min));
-                    min.removeAll(min);
-                }
-
-                for (FoodEntry foodEntry: objects1) {
-                    for (Label label: qualifierCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    minW.add(Collections.min(min));
-                    min.removeAll(min);
-                }
-
-                for (int i = 0; i < minW.size(); i++) {
-                    sumWS += Math.min(minS1.get(i), minW.get(i));
-                }
-
-                quality = (sumWS/objects1.size()) / (sumWS/objects1.size() + sumTwo/objects2.size());
-                double tq = quantifier.getMembership(quality);
-                twoSummaries.add(new TwoSummary(sentence.toString(), tq));
-            }
-        }
-        return twoSummaries;
-    }
-
-    public List<TwoSummary> generateSecondForm(List<Label> qualifiers, List<Label> summarizers) {
-        List<List<Label>> qualifierCombinations = getAllCombinations(qualifiers);
-        List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-        List<TwoSummary> twoSummaries = new ArrayList<>();
-        for (List<Label> qualifierCombination : qualifierCombinations) {
-            for (List<Label> summarizerCombination : summarizerCombinations) {
-                double quality = 0.0;
-                StringBuilder sentence = new StringBuilder();
-                sentence.append(quantifier.toString());
-                if (qualifierCombination.isEmpty()) {
-                    sentence.append(" meat products compared to meat free products are/have ");
-                } else {
-                    sentence.append(" meat products compared to meat free products that are/have ");
-                    for (int i = 0; i < qualifierCombination.size(); i++) {
-                        if (i > 0) {
-                            sentence.append(" and ");
-                        }
-                        sentence.append(qualifierCombination.get(i).toString());
-                    }
-                    sentence.append(" are/have ");
-                }
-                for (int i = 0; i < summarizerCombination.size(); i++) {
-                    if (i > 0) {
-                        sentence.append(" and ");
-                    }
-                    sentence.append(summarizerCombination.get(i).toString());
-                }
-
-                double sumOne = 0.0;
-
-                List<Double> min = new ArrayList<>();
-                List<Double> minS2 = new ArrayList<>();
-                List<Double> minW = new ArrayList<>();
-                double sumWS = 0.0;
-                for (FoodEntry foodEntry : objects1) {
-                    for (Label label : summarizerCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    sumOne += Collections.min(min);
-                    min.removeAll(min);
-                }
-
-                for (FoodEntry foodEntry : objects2) {
-                    for (Label label : summarizerCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    minS2.add(Collections.min(min));
-                    min.removeAll(min);
-                }
-
-                for (FoodEntry foodEntry: objects2) {
-                    for (Label label: qualifierCombination) {
-                        min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable())));
-                    }
-                    minW.add(Collections.min(min));
-                    min.removeAll(min);
-                }
-
-                for (int i = 0; i < minW.size(); i++) {
-                    sumWS += Math.min(minS2.get(i), minW.get(i));
-                }
-
-                quality = (sumOne/objects1.size()) / ((sumOne/objects1.size()) + (sumWS/objects2.size()));
-                double tq = quantifier.getMembership(quality);
-                twoSummaries.add(new TwoSummary(sentence.toString(), tq));
-            }
-        }
-        return twoSummaries;
-    }
-
-    public List<TwoSummary> generateFirstForm(List<Label> summarizers) {
-        List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-        List<TwoSummary> sentences = new ArrayList<>();
         for (List<Label> summarizerCombination : summarizerCombinations) {
             StringBuilder sentence = new StringBuilder();
-            sentence.append(quantifier.toString()).append(" meat products compared to meat free products are/have ");
+            double quality = 0.0;
+
+            if (isFirstForm) {
+                sentence.append(quantifier.toString()).append(" meat products compared to meat free products are/have ");
+            } else {
+                sentence.append("More meat products compared to meat free products are/have ");
+            }
+
             for (int i = 0; i < summarizerCombination.size(); i++) {
                 if (i > 0) {
                     sentence.append(" and ");
                 }
                 sentence.append(summarizerCombination.get(i).toString());
             }
-            double quality = 0.0;
-            double sumOne = 0.0;
-            double sumTwo = 0.0;
-            List<Double> min = new ArrayList<>();
-            for (FoodEntry foodEntry : objects1) {
-                for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                sumOne += Collections.min(min);
-                min.removeAll(min);
+
+            if (isFirstForm) {
+                quality = calculateQuality(summarizerCombination, objects1, objects2);
+            } else {
+                quality = calculateQuality(summarizerCombination, objects2, objects1);
             }
 
-            for (FoodEntry foodEntry : objects2) {
-                for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                sumTwo += Collections.min(min);
-                min.removeAll(min);
-            }
-            sumOne = sumOne / objects1.size();
-            sumTwo = sumTwo / objects2.size();
-            quality = sumOne / (sumOne + sumTwo);
             double tq = quantifier.getMembership(quality);
-            sentences.add(new TwoSummary(sentence.toString(), tq));
+            twoSummaries.add(new TwoSummary(sentence.toString(), tq));
         }
-        return sentences;
+
+        return twoSummaries;
     }
 
-    public List<TwoSummary> generateForthForm(List<Label> summarizers) {
+    private List<TwoSummary> generateFirstForm() {
+        return generateForm(summarizers, true, false);
+    }
+
+    private List<TwoSummary> generateFourthForm() {
+        return generateForm(summarizers, false, false);
+    }
+
+    private List<TwoSummary> generateSecondForm() {
+        return generateQualifiedForm(qualifiers, summarizers, false);
+    }
+
+    private List<TwoSummary> generateThirdForm() {
+        return generateQualifiedForm(qualifiers, summarizers, true);
+    }
+
+    private List<TwoSummary> generateQualifiedForm(List<Label> qualifiers, List<Label> summarizers, boolean isThirdForm) {
+        List<List<Label>> qualifierCombinations = getAllCombinations(qualifiers);
         List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-        List<TwoSummary> sentences = new ArrayList<>();
-        for (List<Label> summarizerCombination : summarizerCombinations) {
-            StringBuilder sentence = new StringBuilder();
-            sentence.append("More meat products compared to meat free products are/have ");
-            for (int i = 0; i < summarizerCombination.size(); i++) {
-                if (i > 0) {
-                    sentence.append(" and ");
-                }
-                sentence.append(summarizerCombination.get(i).toString());
-            }
-            double quality = 0.0;
-            List<Double> min = new ArrayList<>();
-            List<Double> minS1 = new ArrayList<>();
-            List<Double> minS2 = new ArrayList<>();
-            for (FoodEntry foodEntry : objects1) {
-                for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                minS1.add(Collections.min(min));
-                min.removeAll(min);
-            }
+        List<TwoSummary> twoSummaries = new ArrayList<>();
 
-            for (FoodEntry foodEntry : objects2) {
-                for (Label label : summarizerCombination) {
-                    min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
-                }
-                minS2.add(Collections.min(min));
-                min.removeAll(min);
-            }
-            quality = 1 - calculateInclusionLukasiewicz(minS2, minS1);
-            sentences.add(new TwoSummary(sentence.toString(), quality));
-        }
-        return sentences;
-    }
+        for (List<Label> qualifierCombination : qualifierCombinations) {
+            for (List<Label> summarizerCombination : summarizerCombinations) {
+                StringBuilder sentence = new StringBuilder();
+                double quality = 0.0;
 
-    public double calculateInclusionLukasiewicz(List<Double> A, List<Double> B) {
-        double sumImplication = 0.0;
-        for (int i = 0; i < A.size(); i++) {
-            double a = A.get(i);
-            double b = B.get(i);
-            sumImplication += lukasiewiczImplication(a, b);
+                sentence.append(quantifier.toString()).append(" meat products");
+                if (isThirdForm) {
+                    sentence.append(" that are/have ");
+                } else {
+                    sentence.append(" compared to meat free products that are/have ");
+                }
+
+                for (int i = 0; i < qualifierCombination.size(); i++) {
+                    if (i > 0) {
+                        sentence.append(" and ");
+                    }
+                    sentence.append(qualifierCombination.get(i).toString());
+                }
+
+                sentence.append(" are/have ");
+                for (int i = 0; i < summarizerCombination.size(); i++) {
+                    if (i > 0) {
+                        sentence.append(" and ");
+                    }
+                    sentence.append(summarizerCombination.get(i).toString());
+                }
+
+                if (isThirdForm) {
+                    quality = calculateQualifiedQuality(qualifierCombination, summarizerCombination, objects1, objects2);
+                } else {
+                    quality = calculateQualifiedQuality(qualifierCombination, summarizerCombination, objects2, objects1);
+                }
+
+                double tq = quantifier.getMembership(quality);
+                twoSummaries.add(new TwoSummary(sentence.toString(), tq));
+            }
         }
 
-        return sumImplication / A.size();
+        return twoSummaries;
     }
 
-    public double lukasiewiczImplication(double a, double b) {
-        return Math.min(1.0, 1.0 - a + b);
+    private double calculateQuality(List<Label> summarizerCombination, List<FoodEntry> group1, List<FoodEntry> group2) {
+        double sumOne = calculateSum(summarizerCombination, group1);
+        double sumTwo = calculateSum(summarizerCombination, group2);
+
+        sumOne = sumOne / group1.size();
+        sumTwo = sumTwo / group2.size();
+        return sumOne / (sumOne + sumTwo);
+    }
+
+    private double calculateQualifiedQuality(List<Label> qualifierCombination, List<Label> summarizerCombination, List<FoodEntry> group1, List<FoodEntry> group2) {
+        double sumOne = calculateSum(summarizerCombination, group1);
+        double sumQualified = calculateQualifiedSum(qualifierCombination, summarizerCombination, group1);
+        double sumTwo = calculateSum(summarizerCombination, group2);
+
+        return (sumOne / group1.size()) / ((sumOne / group1.size()) + (sumQualified / group2.size()));
+    }
+
+    private double calculateSum(List<Label> combination, List<FoodEntry> group) {
+        double sum = 0.0;
+        List<Double> min = new ArrayList<>();
+        for (FoodEntry foodEntry : group) {
+            for (Label label : combination) {
+                min.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
+            }
+            sum += Collections.min(min);
+            min.clear();
+        }
+        return sum;
+    }
+
+    private double calculateQualifiedSum(List<Label> qualifierCombination, List<Label> summarizerCombination, List<FoodEntry> group) {
+        double sum = 0.0;
+        List<Double> minQualifiers = new ArrayList<>();
+        List<Double> minSummarizers = new ArrayList<>();
+
+        for (FoodEntry foodEntry : group) {
+            for (Label qualifier : qualifierCombination) {
+                minQualifiers.add(qualifier.getMembership(foodEntry.getValueByName(qualifier.getLinguisticVariable().toLowerCase())));
+            }
+            for (Label summarizer : summarizerCombination) {
+                minSummarizers.add(summarizer.getMembership(foodEntry.getValueByName(summarizer.getLinguisticVariable().toLowerCase())));
+            }
+            sum += Math.min(Collections.min(minQualifiers), Collections.min(minSummarizers));
+            minQualifiers.clear();
+            minSummarizers.clear();
+        }
+
+        return sum;
     }
 
     private List<List<Label>> getAllCombinations(List<Label> items) {

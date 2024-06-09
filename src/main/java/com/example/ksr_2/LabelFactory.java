@@ -14,7 +14,7 @@ public class LabelFactory {
         switch (name) {
             case "carbohydrates":
                 List<Double> numbersCarb = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 300.00; i += 0.01) {
+                    for (double i = 0.00; i <= 300.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -27,7 +27,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsCarb, new ClassicSet(numbersCarb), "carbohydrates");
             case "cholesterol":
                 List<Double> numbersChol = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 350.00; i += 0.01) {
+                    for (double i = 0.00; i <= 350.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -40,7 +40,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsChol, new ClassicSet(numbersChol), "cholesterol");
             case "energy":
                 List<Double> numbersEnergy = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 1300.00; i += 0.01) {
+                    for (double i = 0.00; i <= 1300.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -54,7 +54,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsEnergy, new ClassicSet(numbersEnergy), "energy");
             case "fiber":
                 List<Double> numbersFiber = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 100.00; i += 0.01) {
+                    for (double i = 0.00; i <= 100.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -67,7 +67,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsFiber, new ClassicSet(numbersFiber), "fiber");
             case "protein":
                 List<Double> numbersProtein = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 100.00; i += 0.01) {
+                    for (double i = 0.00; i <= 100.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -80,7 +80,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsProtein, new ClassicSet(numbersProtein), "protein");
             case "sugar":
                 List<Double> numbersSugar = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 100.00; i += 0.01) {
+                    for (double i = 0.00; i <= 100.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -93,7 +93,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsSugar, new ClassicSet(numbersSugar), "sugar");
             case "fat":
                 List<Double> numbersFat = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 100.00; i += 0.01) {
+                    for (double i = 0.00; i <= 100.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -108,7 +108,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsFat, new ClassicSet(numbersFat), "fat");
             case "magnesium":
                 List<Double> numbersMagnesium = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 2300.00; i += 0.01) {
+                    for (double i = 0.00; i <= 2300.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -123,7 +123,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsMagnesium, new ClassicSet(numbersMagnesium), "magnesium");
             case "vitamin c":
                 List<Double> numbersC = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 4500.00; i += 0.01) {
+                    for (double i = 0.00; i <= 4500.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -137,7 +137,7 @@ public class LabelFactory {
                 return new LinguisticVariable(labelsC, new ClassicSet(numbersC), "vitamin C");
             case "vitamin b6":
                 List<Double> numbersB6 = new ArrayList<>(){{
-                    for (double i = 0.00; i <= 10.00; i += 0.01) {
+                    for (double i = 0.00; i <= 10.00; i += 1) {
                         add(i);
                     }
                 }};
@@ -157,7 +157,7 @@ public class LabelFactory {
     public static Quantifier createQuantifier(String name, boolean isAbsolute) {
         if (isAbsolute) {
             List<Double> numbersAbsolute = new ArrayList<>() {{
-                for (double i = 0.00; i <= 15000.00; i += 0.01) {
+                for (double i = 0.00; i <= 15000.00; i += 1) {
                     add(i);
                 }
             }};
@@ -175,7 +175,7 @@ public class LabelFactory {
             }
         } else {
             List<Double> numbersRel = new ArrayList<>() {{
-                for (double i = 0.00; i <= 1.00; i += 0.01) {
+                for (double i = 0.00; i <= 1.00; i += 0.1) {
                     add(i);
                 }
             }};

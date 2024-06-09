@@ -10,7 +10,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
@@ -45,10 +44,10 @@
                                     </items>
                                 </MenuButton>
                                 <Button fx:id="createQ" layoutX="78.0" layoutY="392.0" mnemonicParsing="false" onAction="#createQ" text="Stwórz" />
-                        <TextField fx:id="aQ" layoutX="14.0" layoutY="230.0" visible="false" />
-                        <TextField fx:id="bQ" layoutX="14.0" layoutY="263.0" visible="false" />
-                        <TextField fx:id="cQ" layoutX="14.0" layoutY="300.0" visible="false" />
-                        <TextField fx:id="dQ" layoutX="14.0" layoutY="338.0" visible="false" />
+                                <TextField fx:id="aQ" layoutX="14.0" layoutY="230.0" visible="false" />
+                                <TextField fx:id="bQ" layoutX="14.0" layoutY="263.0" visible="false" />
+                                <TextField fx:id="cQ" layoutX="14.0" layoutY="300.0" visible="false" />
+                                <TextField fx:id="dQ" layoutX="14.0" layoutY="338.0" visible="false" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -74,24 +73,24 @@
                                     </yAxis>
                                 </LineChart>
                                 <Button layoutX="80.0" layoutY="394.0" mnemonicParsing="false" onAction="#createS" text="Stwórz" />
-                        <TextField fx:id="dS" layoutX="16.0" layoutY="330.0" visible="false" />
-                        <TextField fx:id="cS" layoutX="16.0" layoutY="284.0" visible="false" />
-                        <TextField fx:id="bS" layoutX="16.0" layoutY="238.0" visible="false" />
-                        <TextField fx:id="aS" layoutX="16.0" layoutY="197.0" visible="false" />
-                        <MenuButton layoutX="16.0" layoutY="102.0" mnemonicParsing="false" text="Zmienna lingwistyczna">
-                          <items>
-                            <MenuItem fx:id="carbohydrates" mnemonicParsing="false" text="carbohydrates" />
-                            <MenuItem fx:id="cholesterol" mnemonicParsing="false" text="cholesterol" />
-                              <MenuItem fx:id="energy" mnemonicParsing="false" text="energy" />
-                              <MenuItem fx:id="fiber" mnemonicParsing="false" text="fiber" />
-                              <MenuItem fx:id="protein" mnemonicParsing="false" text="protein" />
-                              <MenuItem fx:id="sugar" mnemonicParsing="false" text="sugar" />
-                              <MenuItem fx:id="fat" mnemonicParsing="false" text="fat" />
-                              <MenuItem fx:id="magnesium" mnemonicParsing="false" text="magnesium" />
-                              <MenuItem fx:id="vitaminC" mnemonicParsing="false" text="vitamin C" />
-                              <MenuItem fx:id="vitaminB6" mnemonicParsing="false" text="vitamin B6" />
-                          </items>
-                        </MenuButton>
+                                <TextField fx:id="dS" layoutX="16.0" layoutY="330.0" visible="false" />
+                                <TextField fx:id="cS" layoutX="16.0" layoutY="284.0" visible="false" />
+                                <TextField fx:id="bS" layoutX="16.0" layoutY="238.0" visible="false" />
+                                <TextField fx:id="aS" layoutX="16.0" layoutY="197.0" visible="false" />
+                                <MenuButton layoutX="16.0" layoutY="102.0" mnemonicParsing="false" text="Zmienna lingwistyczna">
+                                    <items>
+                                        <MenuItem fx:id="carbohydrates" mnemonicParsing="false" text="carbohydrates" />
+                                        <MenuItem fx:id="cholesterol" mnemonicParsing="false" text="cholesterol" />
+                                        <MenuItem fx:id="energy" mnemonicParsing="false" text="energy" />
+                                        <MenuItem fx:id="fiber" mnemonicParsing="false" text="fiber" />
+                                        <MenuItem fx:id="protein" mnemonicParsing="false" text="protein" />
+                                        <MenuItem fx:id="sugar" mnemonicParsing="false" text="sugar" />
+                                        <MenuItem fx:id="fat" mnemonicParsing="false" text="fat" />
+                                        <MenuItem fx:id="magnesium" mnemonicParsing="false" text="magnesium" />
+                                        <MenuItem fx:id="vitaminC" mnemonicParsing="false" text="vitamin C" />
+                                        <MenuItem fx:id="vitaminB6" mnemonicParsing="false" text="vitamin B6" />
+                                    </items>
+                                </MenuButton>
                             </children>
                         </AnchorPane>
                     </content>
@@ -110,26 +109,26 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TreeView fx:id="W" layoutX="235.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
-                                <TreeView fx:id="S" layoutX="548.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
+                                <ListView fx:id="listViewW" layoutX="235.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
+                                <ListView fx:id="listViewS" layoutX="548.0" layoutY="60.0" prefHeight="315.0" prefWidth="290.0" />
                                 <Button fx:id="buttonGenerateOne" layoutX="161.0" layoutY="459.0" mnemonicParsing="false" onAction="#generateOne" text="Generuj jednopodmiotowe" />
                                 <Label layoutX="78.0" layoutY="25.0" text="Quantity" />
                                 <Label layoutX="343.0" layoutY="25.0" prefHeight="17.0" prefWidth="75.0" text="that are/have" />
                                 <Label layoutX="652.0" layoutY="25.0" prefHeight="17.0" prefWidth="63.0" text="are/have" />
-                        <Label layoutX="17.0" layoutY="390.0" text="Wagi" />
-                        <TextField fx:id="t1" layoutX="20.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T1" />
-                        <TextField fx:id="t2" layoutX="80.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T2" />
-                        <TextField fx:id="t3" layoutX="140.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T3" />
-                        <TextField fx:id="t4" layoutX="200.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T4" />
-                        <TextField fx:id="t5" layoutX="260.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T5" />
-                        <TextField fx:id="t6" layoutX="320.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T6" />
-                        <TextField fx:id="t7" layoutX="380.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T7" />
-                        <TextField fx:id="t10" layoutX="560.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T10" />
-                        <TextField fx:id="t8" layoutX="440.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T8" />
-                        <TextField fx:id="t11" layoutX="620.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T11" />
-                        <TextField fx:id="t9" layoutX="500.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T9" />
-                        <TreeView fx:id="Q" layoutX="20.0" layoutY="60.0" prefHeight="315.0" prefWidth="200.0" />
-                        <Button fx:id="buttonGenerateTwo" layoutX="445.0" layoutY="459.0" mnemonicParsing="false" onAction="#generateTwo" text="Generuj dwupodmiotowe" />
+                                <Label layoutX="17.0" layoutY="390.0" text="Wagi" />
+                                <TextField fx:id="t1" layoutX="20.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T1" />
+                                <TextField fx:id="t2" layoutX="80.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T2" />
+                                <TextField fx:id="t3" layoutX="140.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T3" />
+                                <TextField fx:id="t4" layoutX="200.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T4" />
+                                <TextField fx:id="t5" layoutX="260.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T5" />
+                                <TextField fx:id="t6" layoutX="320.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T6" />
+                                <TextField fx:id="t7" layoutX="380.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T7" />
+                                <TextField fx:id="t10" layoutX="560.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T10" />
+                                <TextField fx:id="t8" layoutX="440.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T8" />
+                                <TextField fx:id="t11" layoutX="620.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T11" />
+                                <TextField fx:id="t9" layoutX="500.0" layoutY="415.0" prefHeight="25.0" prefWidth="40.0" promptText="T9" />
+                                <ListView fx:id="listViewQ" layoutX="20.0" layoutY="60.0" prefHeight="315.0" prefWidth="200.0" />
+                                <Button fx:id="buttonGenerateTwo" layoutX="445.0" layoutY="459.0" mnemonicParsing="false" onAction="#generateTwo" text="Generuj dwupodmiotowe" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -137,9 +136,10 @@
                 <Tab text="Wyniki">
                     <content>
                         <AnchorPane fx:id="wynikiTabContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ListView fx:id="view" layoutX="14.0" layoutY="14.0" prefHeight="504.0" prefWidth="822.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                     </children></AnchorPane>
+                            <children>
+                                <ListView fx:id="view" layoutX="14.0" layoutY="14.0" prefHeight="504.0" prefWidth="822.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                            </children>
+                        </AnchorPane>
                     </content>
                 </Tab>
             </tabs>

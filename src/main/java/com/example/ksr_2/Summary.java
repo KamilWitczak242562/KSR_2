@@ -27,87 +27,52 @@ public class Summary {
     }
 
     public Summary(Quantifier quantifier, List<Label> summarizers, List<FoodEntry> objects1, List<Double> weights) {
-        this.quantifier = quantifier;
-        this.summarizers = summarizers;
-        this.objects1 = objects1;
-        this.weights = weights;
+        this(quantifier, null, summarizers, objects1, weights);
     }
-
 
     public List<OneSummary> generateAllOneSummaries() {
         List<OneSummary> allOneSummaries = new ArrayList<>();
         List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-        List<List<Label>> qualifierCombinations;
-        if (qualifiers != null) {
-            qualifierCombinations = getAllCombinations(qualifiers);
-            for (List<Label> currentSummarizers : summarizerCombinations) {
-                for (List<Label> currentQualifiers: qualifierCombinations) {
-                    List<String> sentences = generateSentences(currentQualifiers, currentSummarizers);
-                    for (String sentence : sentences) {
-                        Measures measures1;
-                        measures1 = new Measures(weights, quantifier, currentQualifiers, currentSummarizers, objects1);
-                        allOneSummaries.add(new OneSummary(sentence, measures1));
-                    }
+        List<List<Label>> qualifierCombinations = qualifiers != null ? getAllCombinations(qualifiers) : null;
+
+        for (List<Label> currentSummarizers : summarizerCombinations) {
+            if (qualifierCombinations != null) {
+                for (List<Label> currentQualifiers : qualifierCombinations) {
+                    String sentence = generateSentence(currentQualifiers, currentSummarizers);
+                    Measures measures = new Measures(weights, quantifier, currentQualifiers, currentSummarizers, objects1);
+                    allOneSummaries.add(new OneSummary(sentence, measures));
                 }
-            }
-        } else {
-            for (List<Label> currentSummarizers : summarizerCombinations) {
-                List<String> sentences = generateSentences(qualifiers, currentSummarizers);
-                for (String sentence : sentences) {
-                    Measures measures1;
-                    measures1 = new Measures(weights, quantifier, currentSummarizers, objects1);
-                    allOneSummaries.add(new OneSummary(sentence, measures1));
-                }
+            } else {
+                String sentence = generateSentence(null, currentSummarizers);
+                Measures measures = new Measures(weights, quantifier, currentSummarizers, objects1);
+                allOneSummaries.add(new OneSummary(sentence, measures));
             }
         }
+
         return allOneSummaries;
     }
 
-    public List<String> generateSentences(List<Label> qualifiers, List<Label> summarizers) {
-        List<String> sentences = new ArrayList<>();
-        List<List<Label>> qualifierCombinations;
-        List<List<Label>> summarizerCombinations = getAllCombinations(summarizers);
-        if (qualifiers != null) {
-            qualifierCombinations = getAllCombinations(qualifiers);
-            for (List<Label> qualifierCombination : qualifierCombinations) {
-                for (List<Label> summarizerCombination : summarizerCombinations) {
-                    StringBuilder sentence = new StringBuilder();
-                    if (qualifierCombination.isEmpty()) {
-                        sentence.append(quantifier.toString()).append(" products have ");
-                    } else {
-                        sentence.append(quantifier.toString()).append(" products that are/have ");
-                        for (int i = 0; i < qualifierCombination.size(); i++) {
-                            if (i > 0) {
-                                sentence.append(" and ");
-                            }
-                            sentence.append(qualifierCombination.get(i).toString());
-                        }
-                        sentence.append(" are/have ");
-                    }
-                    for (int i = 0; i < summarizerCombination.size(); i++) {
-                        if (i > 0) {
-                            sentence.append(" and ");
-                        }
-                        sentence.append(summarizerCombination.get(i).toString());
-                    }
-                    sentences.add(sentence.toString());
-                }
-            }
+    public String generateSentence(List<Label> qualifiers, List<Label> summarizers) {
+        StringBuilder sentence = new StringBuilder();
+        if (qualifiers == null || qualifiers.isEmpty()) {
+            sentence.append(quantifier).append(" products are/have ");
         } else {
-            for (List<Label> summarizerCombination : summarizerCombinations) {
-                StringBuilder sentence = new StringBuilder();
-                sentence.append(quantifier.toString()).append(" products are/have ");
-                for (int i = 0; i < summarizerCombination.size(); i++) {
-                    if (i > 0) {
-                        sentence.append(" and ");
-                    }
-                    sentence.append(summarizerCombination.get(i).toString());
+            sentence.append(quantifier).append(" products that are/have ");
+            for (int i = 0; i < qualifiers.size(); i++) {
+                if (i > 0) {
+                    sentence.append(" and ");
                 }
-                sentences.add(sentence.toString());
+                sentence.append(qualifiers.get(i));
             }
+            sentence.append(" are/have ");
         }
-
-        return sentences;
+        for (int i = 0; i < summarizers.size(); i++) {
+            if (i > 0) {
+                sentence.append(" and ");
+            }
+            sentence.append(summarizers.get(i));
+        }
+        return sentence.toString();
     }
 
     private List<List<Label>> getAllCombinations(List<Label> items) {
@@ -127,6 +92,4 @@ public class Summary {
 
         return combinations;
     }
-
-
 }
