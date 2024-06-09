@@ -67,9 +67,7 @@ public class Measures {
             for (Label label : summarizers) {
                 minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
             }
-            if (Collections.min(minValues) > 0.0) {
-                supp.add(Collections.min(minValues));
-            }
+            supp.add(Collections.min(minValues));
         }
 
         if (qualifiers == null) {
@@ -80,17 +78,23 @@ public class Measures {
                 for (Label label : qualifiers) {
                     minValues.add(label.getMembership(foodEntry.getValueByName(label.getLinguisticVariable().toLowerCase())));
                 }
-                if (Collections.min(minValues) > 0.0) {
-                    supp2.add(Collections.min(minValues));
-                }
+                supp2.add(Collections.min(minValues));
             }
 
             List<Double> suppWS = new ArrayList<>();
 
-            for (int i = 0; i < supp.size(); i++) {
-                suppWS.add(Math.min(supp.get(i), supp2.get(i)));
+            int minSize = Math.min(supp.size(), supp2.size());
+            for (int i = 0; i < minSize; i++) {
+                if (Math.min(supp.get(i), supp2.get(i)) > 0.0) {
+                    suppWS.add(Math.min(supp.get(i), supp2.get(i)));
+                }
             }
 
+            for (int i = supp2.size() - 1; i >= 0; i--) {
+                if (supp2.get(i) == 0.0) {
+                    supp2.remove(i);
+                }
+            }
             t1 = quantifier.getMembership((double) suppWS.size() / supp2.size());
         }
 

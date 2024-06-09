@@ -30,7 +30,7 @@ public class HelloController implements Initializable {
     @FXML
     private TextField t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
     @FXML
-    private TextField nameQ, bQ, aQ, cQ, dQ, bS, aS, cS, dS, nameS, startS, endS, nameSLing;
+    private TextField nameQ, bQ, aQ, cQ, dQ, bS, aS, cS, dS, nameS;
 
     @FXML
     private LineChart<Number, Number> chartS, chartQ;
