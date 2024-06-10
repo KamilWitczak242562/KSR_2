@@ -71,7 +71,14 @@ public class Measures {
         }
 
         if (qualifiers == null) {
+            for (int i = supp.size() - 1; i >= 0; i--) {
+                if (supp.get(i) == 0.0) {
+                    supp.remove(i);
+                }
+            }
+            System.out.println("supp size " + supp.size());
             t1 = quantifier.isAbsolute() ? quantifier.getMembership(supp.size()) : quantifier.getMembership((double) supp.size() / objects1.size());
+            System.out.println(t1);
         } else {
             for (FoodEntry foodEntry : objects1) {
                 minValues.clear();

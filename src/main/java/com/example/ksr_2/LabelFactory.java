@@ -169,7 +169,7 @@ public class LabelFactory {
                 case "around 10000":
                     return new Quantifier(new FuzzySet(new Trapezoidal(6000, 9000, 11000, 13000),new ClassicSet(numbersAbsolute)), "Around 10000", true);
                 case "over 12000":
-                    return new Quantifier(new FuzzySet(new Trapezoidal(12000, 12000, 12000, 15000),new ClassicSet(numbersAbsolute)), "Over 12000", true);
+                    return new Quantifier(new FuzzySet(new Trapezoidal(12000, 12000, 12000, 16000),new ClassicSet(numbersAbsolute)), "Over 12000", true);
                 default:
                     return null;
             }
